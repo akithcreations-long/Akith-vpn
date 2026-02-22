@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control — Akith VPN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { 
+            --cyan: #00e0ff; 
+            --red: #ff4d4d; 
+            --green: #25d366;
+            --gold: #f2c94c;
+            --purple: #7b2fff;
+            --bg: #05070a; 
+            --card: rgba(20, 25, 35, 0.9); 
+        }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--bg); 
+            color: #fff; 
+            display: flex; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+
+        /* Background Glow */
+        .bg-glow {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.1;
+        }
+        .orb-1 { width: 500px; height: 500px; top: -100px; right: -100px; background: var(--purple); }
+        .orb-2 { width: 400px; height: 400px; bottom: -100px; left: -100px; background: var(--cyan); }
+
+        /* Sidebar */
+        .sidebar { 
+            width: 260px; 
+            background: rgba(10, 12, 18, 0.95); 
+            border-right: 1px solid rgba(255,255,255,0.1); 
+            padding: 25px 15px; 
+            position: fixed; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column;
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            transition: 0.3s;
+        }
+        .logo { 
+            font-size: 1.1rem; 
+            font-weight: 900; 
+            color: #fff; 
+            margin-bottom: 30px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            text-transform: uppercase;
+            padding: 15px;
+            background: rgba(0, 224, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 224, 255, 0.2);
+        }
+        .logo i {
+            color: var(--cyan);
+            font-size: 1.3rem;
+        }
+        .logo span {
+            display: block;
+            font-size: 0.6rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .nav-label {
+            font-size: 0.65rem;
+            color: #505575;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 15px 15px 10px;
+            font-weight: 800;
+        }
+        .nav-link { 
+            padding: 14px 18px; 
+            border-radius: 15px; 
+            color: #9d9fbb; 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            margin-bottom: 8px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active { 
+            background: rgba(0, 224, 255, 0.1); 
+            color: #fff;
+            border-color: rgba(0, 224, 255, 0.2);
+        }
+        .nav-link.active i {
+            color: var(--cyan);
+        }
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+        .nav-badge {
+            margin-left: auto;
+            background: var(--cyan);
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px;
+            background: rgba(255, 77, 77, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 77, 77, 0.2);
+        }
+
+        /* Mobile Menu */
+        .menu-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 200;
+            background: var(--cyan);
+            color: #000;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 99;
+        }
+        .overlay.active { display: block; }
+
+        /* Main Content */
+        .main { 
+            margin-left: 260px; 
+            flex: 1; 
+            padding: 30px;
+            transition: 0.3s;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+        .header p {
+            color: #8a8cb0;
+            font-size: 0.85rem;
+        }
+
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-card .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        .stat-card.users .icon { background: rgba(0, 224, 255, 0.15); color: var(--cyan); }
+        .stat-card.configs .icon { background: rgba(123, 47, 255, 0.15); color: var(--purple); }
+        .stat-card.servers .icon { background: rgba(37, 211, 102, 0.15); color: var(--green); }
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 900;
+        }
+        .stat-card .label {
+            font-size: 0.75rem;
+            color: #8a8cb0;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Cards & Forms */
+        .card { 
+            background: var(--card); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 24px; 
+            padding: 25px; 
+            margin-bottom: 25px; 
+            backdrop-filter: blur(15px); 
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .card h3 { 
+            font-weight: 800; 
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card h3 i {
+            color: var(--cyan);
+        }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { 
+            display: block; 
+            font-size: 0.8rem; 
+            color: #8a8cb0; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+        }
+        .form-group label i {
+            color: var(--cyan);
+            margin-right: 5px;
+        }
+        .input { 
+            width: 100%; 
+            padding: 14px 18px; 
+            border-radius: 15px; 
+            border: 2px solid rgba(255,255,255,0.1); 
+            background: rgba(0,0,0,0.3); 
+            color: #fff; 
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .input:focus { 
+            border-color: var(--cyan); 
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 224, 255, 0.1);
+        }
+        .input::placeholder {
+            color: #555;
+        }
+        textarea.input {
+            resize: vertical;
+            min-height: 100px;
+        }
+        select.input {
+            cursor: pointer;
+        }
+
+        .btn { 
+            padding: 14px 25px; 
+            border-radius: 15px; 
+            border: none; 
+            font-weight: 800; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            transition: 0.2s; 
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+        .btn-cyan { 
+            background: linear-gradient(135deg, var(--cyan), #00b8d4); 
+            color: #000; 
+        }
+        .btn-cyan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 224, 255, 0.3);
+        }
+        .btn-purple {
+            background: linear-gradient(135deg, var(--purple), #5a1fd4);
+            color: #fff;
+        }
+        .btn-green {
+            background: linear-gradient(135deg, var(--green), #1da851);
+            color: #fff;
+        }
+        .btn-red { 
+            background: rgba(255, 77, 77, 0.15); 
+            color: var(--red); 
+            border: 1px solid rgba(255, 77, 77, 0.2); 
+        }
+        .btn-red:hover { 
+            background: var(--red); 
+            color: #fff; 
+        }
+        .btn-glass {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-sm {
+            padding: 10px 18px;
+            font-size: 0.8rem;
+        }
+
+        /* User Item Card */
+        .user-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 20px; 
+            background: rgba(255,255,255,0.02); 
+            border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            margin-bottom: 12px;
+            transition: 0.2s;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .user-item:hover {
+            background: rgba(0, 224, 255, 0.05);
+            border-color: rgba(0, 224, 255, 0.2);
+        }
+        .u-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+        .u-info { flex: 1; min-width: 200px; }
+        .u-info b { font-size: 1rem; color: #fff; display: block; }
+        .u-info span { font-size: 0.75rem; color: #8a8cb0; display: block; margin-top: 3px; }
+        .u-info .u-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .u-info .u-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+        }
+        .u-info .u-meta span i {
+            font-size: 0.65rem;
+        }
+        .u-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        .action-btn.edit {
+            background: rgba(0, 224, 255, 0.15);
+            color: var(--cyan);
+        }
+        .action-btn.delete {
+            background: rgba(255, 77, 77, 0.15);
+            color: var(--red);
+        }
+        .action-btn.config {
+            background: rgba(123, 47, 255, 0.15);
+            color: var(--purple);
+        }
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .status-active {
+            background: rgba(37, 211, 102, 0.15);
+            color: var(--green);
+        }
+        .status-inactive {
+            background: rgba(255, 77, 77, 0.15);
+            color: var(--red);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: linear-gradient(135deg, rgba(20, 25, 35, 0.98), rgba(10, 12, 18, 0.98));
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .modal-header h2 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-header h2 i {
+            color: var(--cyan);
+        }
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 77, 77, 0.15);
+            color: var(--red);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .modal-close:hover {
+            background: var(--red);
+            color: #fff;
+        }
+
+        /* Server Item */
+        .srv-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 18px;
+            margin-bottom: 12px;
+        }
+        .srv-flag {
+            font-size: 2rem;
+        }
+        .srv-info {
+            flex: 1;
+        }
+        .srv-info b {
+            display: block;
+            font-weight: 700;
+        }
+        .srv-info span {
+            font-size: 0.75rem;
+            color: #8a8cb0;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 18px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notification.success {
+            background: linear-gradient(135deg, var(--green), #1da851);
+            color: #fff;
+        }
+        .notification.error {
+            background: linear-gradient(135deg, var(--red), #e04343);
+            color: #fff;
+        }
+        .notification.info {
+            background: linear-gradient(135deg, var(--cyan), #00b8d4);
+            color: #000;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Config List in Modal */
+        .config-item {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--cyan);
+            word-break: break-all;
+            position: relative;
+        }
+        .config-item .config-num {
+            position: absolute;
+            top: -8px;
+            left: 10px;
+            background: var(--purple);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) { 
+            .form-grid { grid-template-columns: 1fr; }
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main {
+                margin-left: 0;
+            }
+            .menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .header {
+                padding-left: 70px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 10px; }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #555;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-glow">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+</div>
+
+<button class="menu-btn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="logo">
+        <i class="fas fa-user-shield"></i>
+        <div>
+            AKITH ADMIN
+            <span>VPN Control Panel</span>
+        </div>
+    </div>
+
+    <div class="nav-label">Management</div>
+    <div class="nav-link active" onclick="showPg('dashboard', this)">
+        <i class="fas fa-chart-pie"></i> Dashboard
+    </div>
+    <div class="nav-link" onclick="showPg('users', this)">
+        <i class="fas fa-users"></i> Users
+        <span class="nav-badge" id="userBadge">0</span>
+    </div>
+    <div class="nav-link" onclick="showPg('configs', this)">
+        <i class="fas fa-key"></i> Configs
+        <span class="nav-badge" id="configBadge">0</span>
+    </div>
+    <div class="nav-link" onclick="showPg('servers', this)">
+        <i class="fas fa-server"></i> Servers
+    </div>
+
+    <div class="nav-label">Communication</div>
+    <div class="nav-link" onclick="showPg('notice', this)">
+        <i class="fas fa-bullhorn"></i> Notice
+    </div>
+
+    <div class="sidebar-footer">
+        <a href="client.html" target="_blank" class="nav-link" style="color:var(--cyan);margin:0;">
+            <i class="fas fa-external-link-alt"></i> Open Client Panel
+        </a>
+    </div>
+</aside>
+
+<main class="main">
+    <!-- DASHBOARD PAGE -->
+    <section class="page active" id="pg-dashboard">
+        <div class="header">
+            <div>
+                <h1>Dashboard</h1>
+                <p>VPN System Overview</p>
+            </div>
+            <button class="btn btn-glass" onclick="renderAll()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card users">
+                <div class="icon"><i class="fas fa-users"></i></div>
+                <div class="label">Total Users</div>
+                <div class="value" id="statUsers">0</div>
+            </div>
+            <div class="stat-card configs">
+                <div class="icon"><i class="fas fa-key"></i></div>
+                <div class="label">Total Configs</div>
+                <div class="value" id="statConfigs">0</div>
+            </div>
+            <div class="stat-card servers">
+                <div class="icon"><i class="fas fa-server"></i></div>
+                <div class="label">Active Servers</div>
+                <div class="value" id="statServers">0</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <button class="btn btn-cyan" onclick="showPg('users', document.querySelector('[onclick*=users]')); openUserModal();">
+                    <i class="fas fa-user-plus"></i> Add User
+                </button>
+                <button class="btn btn-purple" onclick="showPg('configs', document.querySelector('[onclick*=configs]')); openConfigModal();">
+                    <i class="fas fa-key"></i> Add Config
+                </button>
+                <button class="btn btn-green" onclick="showPg('servers', document.querySelector('[onclick*=servers]'))">
+                    <i class="fas fa-server"></i> Add Server
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-users"></i> Recent Users</h3>
+            </div>
+            <div id="recentUsers"></div>
+        </div>
+    </section>
+
+    <!-- USERS PAGE -->
+    <section class="page" id="pg-users">
+        <div class="header">
+            <div>
+                <h1>User Management</h1>
+                <p>Create and manage VPN users</p>
+            </div>
+            <button class="btn btn-cyan" onclick="openUserModal()">
+                <i class="fas fa-user-plus"></i> Add User
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-users"></i> All Users</h3>
+                <span id="userCount" style="color:#8a8cb0;font-size:0.85rem;">0 users</span>
+            </div>
+            <div id="userListRender"></div>
+        </div>
+    </section>
+
+    <!-- CONFIGS PAGE -->
+    <section class="page" id="pg-configs">
+        <div class="header">
+            <div>
+                <h1>Config Management</h1>
+                <p>Manage VPN configurations for users</p>
+            </div>
+            <button class="btn btn-cyan" onclick="openConfigModal()">
+                <i class="fas fa-plus"></i> Add Config
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-key"></i> All Configs</h3>
+                <span id="configCount" style="color:#8a8cb0;font-size:0.85rem;">0 configs</span>
+            </div>
+            <div id="configListRender"></div>
+        </div>
+    </section>
+
+    <!-- SERVERS PAGE -->
+    <section class="page" id="pg-servers">
+        <div class="header">
+            <div>
+                <h1>Server Management</h1>
+                <p>Manage VPN servers</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-plus-circle"></i> Add New Server</h3>
+            <div class="form-grid" style="margin-top:20px;">
+                <div class="form-group">
+                    <label><i class="fas fa-server"></i> Server Name</label>
+                    <input type="text" id="ns-name" class="input" placeholder="e.g. Singapore Premium">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-flag"></i> Flag Emoji</label>
+                    <input type="text" id="ns-flag" class="input" placeholder="e.g. 🇸🇬">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                    <input type="text" id="ns-location" class="input" placeholder="e.g. Singapore">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-signal"></i> Status</label>
+                    <select id="ns-status" class="input">
+                        <option value="online">Online</option>
+                        <option value="offline">Offline</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-cyan" style="margin-top:15px;" onclick="addServer()">
+                <i class="fas fa-plus"></i> Add Server
+            </button>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-globe"></i> Server List</h3>
+            <div id="serverListRender" style="margin-top:20px;"></div>
+        </div>
+    </section>
+
+    <!-- NOTICE PAGE -->
+    <section class="page" id="pg-notice">
+        <div class="header">
+            <div>
+                <h1>Notice Board</h1>
+                <p>Broadcast messages to all users</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-bullhorn"></i> Current Notice</h3>
+            <div class="form-group" style="margin-top:20px;">
+                <label><i class="fas fa-heading"></i> Notice Title</label>
+                <input type="text" id="notice-title" class="input" placeholder="Notice title...">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-align-left"></i> Notice Message</label>
+                <textarea id="notice-message" class="input" rows="5" placeholder="Dashboard එකේ පේන්න ඕන පණිවිඩය මෙතන ගහපන්..."></textarea>
+            </div>
+            <button class="btn btn-cyan" onclick="saveNotice()">
+                <i class="fas fa-save"></i> Update Notice
+            </button>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-history"></i> All Notices</h3>
+            <div id="noticeListRender" style="margin-top:20px;"></div>
+        </div>
+    </section>
+</main>
+
+<!-- USER MODAL -->
+<div class="modal-overlay" id="userModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2><i class="fas fa-user-plus"></i> <span id="userModalTitle">Add New User</span></h2>
+            <button class="modal-close" onclick="closeUserModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="userForm" onsubmit="saveUser(event)">
+            <input type="hidden" id="editUserId">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="nu-name" class="input" placeholder="e.g. Akith Perera" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-at"></i> Username</label>
+                    <input type="text" id="nu-user" class="input" placeholder="e.g. akith_69" required>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="text" id="nu-pass" class="input" placeholder="e.g. 12345" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-crown"></i> Plan</label>
+                    <select id="nu-plan" class="input">
+                        <option value="Basic">Basic</option>
+                        <option value="Premium" selected>Premium</option>
+                        <option value="Ultimate">Ultimate</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label><i class="fas fa-database"></i> Total Data (GB)</label>
+                    <input type="number" id="nu-total" class="input" value="100" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Expiry Date</label>
+                    <input type="date" id="nu-expiry" class="input" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-toggle-on"></i> Status</label>
+                <select id="nu-status" class="input">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-cyan" style="width:100%;justify-content:center;padding:15px;">
+                <i class="fas fa-save"></i> Save User
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- CONFIG MODAL -->
+<div class="modal-overlay" id="configModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2><i class="fas fa-key"></i> <span id="configModalTitle">Add New Config</span></h2>
+            <button class="modal-close" onclick="closeConfigModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="configForm" onsubmit="saveConfig(event)">
+            <input type="hidden" id="editConfigId">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Config Name</label>
+                    <input type="text" id="nc-name" class="input" placeholder="e.g. Singapore Premium V1" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Assign to User</label>
+                    <select id="nc-user" class="input" required>
+                        <option value="">Select User</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label><i class="fas fa-server"></i> Server Name</label>
+                    <input type="text" id="nc-server" class="input" placeholder="e.g. Singapore">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-code"></i> Protocol Type</label>
+                    <select id="nc-type" class="input">
+                        <option value="V2Ray">V2Ray</option>
+                        <option value="VMess">VMess</option>
+                        <option value="VLess">VLess</option>
+                        <option value="Trojan">Trojan</option>
+                        <option value="SSH">SSH</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-file-code"></i> Config Code</label>
+                <textarea id="nc-code" class="input" rows="6" placeholder="vmess://... හෝ vless://... config code එක paste කරන්න" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-cyan" style="width:100%;justify-content:center;padding:15px;">
+                <i class="fas fa-save"></i> Save Config
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- VIEW CONFIGS MODAL -->
+<div class="modal-overlay" id="viewConfigsModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2><i class="fas fa-key"></i> User Configs</h2>
+            <button class="modal-close" onclick="closeViewConfigsModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="viewConfigsContent"></div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // NOTIFICATION
+    // ==========================================
+    function showNotification(message, type = 'success') {
+        const existing = document.querySelector('.notification');
+        if (existing) existing.remove();
+
+        const icons = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle' };
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `<i class="fas fa-${icons[type]}"></i> ${message}`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideIn 0.3s ease reverse';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // ==========================================
+    // SIDEBAR TOGGLE
+    // ==========================================
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+
+    // ==========================================
+    // PAGE SWITCHING
+    // ==========================================
+    function showPg(id, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('pg-' + id).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        if (el) el.classList.add('active');
+        
+        if (window.innerWidth < 900) {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+        
+        renderAll();
+    }
+
+    // ==========================================
+    // GENERATE ID
+    // ==========================================
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    // ==========================================
+    // FORMAT DATE
+    // ==========================================
+    function formatDate(dateStr) {
+        if (!dateStr) return 'N/A';
+        return new Date(dateStr).toLocaleDateString('en-US', {
+            year: 'numeric', month: 'short', day: 'numeric'
+        });
+    }
+
+    // ==========================================
+    // USER MODAL FUNCTIONS
+    // ==========================================
+    function openUserModal() {
+        document.getElementById('userModal').classList.add('active');
+        document.getElementById('userModalTitle').innerText = 'Add New User';
+        document.getElementById('userForm').reset();
+        document.getElementById('editUserId').value = '';
+        
+        // Set default expiry (30 days from now)
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + 30);
+        document.getElementById('nu-expiry').value = expiry.toISOString().split('T')[0];
+    }
+
+    function closeUserModal() {
+        document.getElementById('userModal').classList.remove('active');
+    }
+
+    // ==========================================
+    // CONFIG MODAL FUNCTIONS
+    // ==========================================
+    function openConfigModal() {
+        document.getElementById('configModal').classList.add('active');
+        document.getElementById('configModalTitle').innerText = 'Add New Config';
+        document.getElementById('configForm').reset();
+        document.getElementById('editConfigId').value = '';
+        populateUserDropdown();
+    }
+
+    function closeConfigModal() {
+        document.getElementById('configModal').classList.remove('active');
+    }
+
+    function closeViewConfigsModal() {
+        document.getElementById('viewConfigsModal').classList.remove('active');
+    }
+
+    // ==========================================
+    // POPULATE USER DROPDOWN
+    // ==========================================
+    function populateUserDropdown() {
+        const users = JSON.parse(localStorage.getItem('vpn_users')) || [];
+        const select = document.getElementById('nc-user');
+        select.innerHTML = '<option value="">Select User</option>';
+        users.forEach(user => {
+            select.innerHTML += `<option value="${user.username}">${user.name} (@${user.username})</option>`;
+        });
+    }
+
+    // ==========================================
+    // SAVE USER
+    // ==========================================
+    function saveUser(e) {
+        e.preventDefault();
+
+        const users = JSON.parse(localStorage.getItem('vpn_users')) || [];
+        const editId = document.getElementById('editUserId').value;
+        const isEdit = !!editId;
+
+        const username = document.getElementById('nu-user').value.trim().toLowerCase();
+        const name = document.getElementById('nu-name').value.trim();
+        const password = document.getElementById('nu-pass').value.trim();
+        const plan = document.getElementById('nu-plan').value;
+        const totalData = parseFloat(document.getElementById('nu-total').value);
+        const expiryDate = document.getElementById('nu-expiry').value;
+        const status = document.getElementById('nu-status').value;
+
+        // Check if username exists (for new users)
+        if (!isEdit && users.some(u => u.username === username)) {
+            showNotification('Username already exists!', 'error');
+            return;
+        }
+
+        const userData = {
+            id: isEdit ? editId : generateId(),
+            username,
+            name,
+            password,
+            plan,
+            totalData,
+            dataLimit: totalData,
+            usedData: isEdit ? (users.find(u => u.id === editId)?.usedData || 0) : 0,
+            expiryDate,
+            expiry: expiryDate,
+            status,
+            createdAt: isEdit ? (users.find(u => u.id === editId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+        };
+
+        if (isEdit) {
+            const index = users.findIndex(u => u.id === editId);
+            if (index !== -1) {
+                users[index] = userData;
+            }
+        } else {
+            users.push(userData);
+        }
+
+        localStorage.setItem('vpn_users', JSON.stringify(users));
+
+        // Update currentUser if logged in user is being edited
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser && currentUser.username === username) {
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+        }
+
+        showNotification(`User ${isEdit ? 'updated' : 'created'} successfully!`);
+        closeUserModal();
+        renderAll();
+    }
+
+    // ==========================================
+    // EDIT USER
+    // ==========================================
+    function editUser(id) {
+        const users = JSON.parse(localStorage.getItem('vpn_users')) || [];
+        const user = users.find(u => u.id === id);
+        if (!user) return;
+
+        document.getElementById('editUserId').value = user.id;
+        document.getElementById('nu-name').value = user.name;
+        document.getElementById('nu-user').value = user.username;
+        document.getElementById('nu-pass').value = user.password;
+        document.getElementById('nu-plan').value = user.plan || 'Premium';
+        document.getElementById('nu-total').value = user.totalData || user.dataLimit || 100;
+        document.getElementById('nu-expiry').value = user.expiryDate || user.expiry || '';
+        document.getElementById('nu-status').value = user.status || 'active';
+
+        document.getElementById('userModalTitle').innerText = 'Edit User';
+        document.getElementById('userModal').classList.add('active');
+    }
+
+    // ==========================================
+    // DELETE USER
+    // ==========================================
+    function deleteUser(id) {
+        if (!confirm('මෙම user delete කරන්නද? ඔහුගේ configs ද delete වේවි!')) return;
+
+        let users = JSON.parse(localStorage.getItem('vpn_users')) || [];
+        const user = users.find(u => u.id === id);
+        users = users.filter(u => u.id !== id);
+        localStorage.setItem('vpn_users', JSON.stringify(users));
+
+        // Delete user's configs too
+        let configs = JSON.parse(localStorage.getItem('vpn_configs')) || [];
+        configs = configs.filter(c => c.user !== user?.username);
+        localStorage.setItem('vpn_configs', JSON.stringify(configs));
+
+        showNotification('User deleted successfully!');
+        renderAll();
+    }
+
+    // ==========================================
+    // UPDATE USED DATA
+    // ==========================================
+    function updateUsedData(id, value) {
+        const users = JSON.parse(localStorage.getItem('vpn_users')) || [];
+        const index = users.findIndex(u => u.id === id);
+        if (index === -1) return;
+
+        users[index].usedData = parseFloat(value) || 0;
+        localStorage.setItem('vpn_users', JSON.stringify(users));
+
+        // Update currentUser if logged in
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser && currentUser.username === users[index].username) {
+            currentUser.usedData = users[index].usedData;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+
+        showNotification('Data updated!', 'info');
+    }
+
+    // ==========================================
+    // VIEW USER CONFIGS
+    // ==========================================
+    function viewUserConfigs(username) {
+        const configs = JSON.parse(localStorage.getItem('vpn_configs')) || [];
+        const userConfigs = configs.filter(c => c.user === username);
+
+        const content = document.getElementById('viewConfigsContent');
+        
+        if (userConfigs.length === 0) {
+            content.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-key"></i>
+                    <p>No configs assigned to this user</p>
+                </div>
+            `;
+        } else {
+            content.innerHTML = userConfigs.map((config, i) => `
+                <div class="config-item">
+                    <span class="config-num">${i + 1}</span>
+                    <div style="margin-bottom:8px;color:#fff;font-family:'Poppins',sans-serif;font-weight:600;">${config.name}</div>
+                    <div style="font-size:0.7rem;color:#888;margin-bottom:5px;">${config.server} • ${config.type}</div>
+                    ${config.code}
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('viewConfigsModal').classList.add('active');
+    }
+
+    // ==========================================
+    // SAVE CONFIG
+    // ==========================================
+    function saveConfig(e) {
+        e.preventDefault();
+
+        const configs = JSON.parse(localStorage.getItem('vpn_configs')) || [];
+        const editId = document.getElementById('editConfigId').value;
+        const isEdit = !!editId;
+
+        const configData = {
+            id: isEdit ? editId : generateId(),
+            name: document.getElementById('nc-name').value.trim(),
+            user: document.getElementById('nc-user').value,
+            server: document.getElementById('nc-server').value.trim(),
+            type: document.getElementById('nc-type').value,
+            code: document.getElementById('nc-code').value.trim(),
+            createdAt: isEdit ? (configs.find(c => c.id === editId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+        };
+
+        if (isEdit) {
+            const index = configs.findIndex(c => c.id === editId);
+            if (index !== -1) {
+                configs[index] = configData;
+            }
+        } else {
+            configs.push(configData);
+        }
+
+        localStorage.setItem('vpn_configs', JSON.stringify(configs));
+        showNotification(`Config ${isEdit ? 'updated' : 'created'} successfully!`);
+        closeConfigModal();
+        renderAll();
+    }
+
+    // ==========================================
+    // EDIT CONFIG
+    // ==========================================
+    function editConfig(id) {
+        const configs = JSON.parse(localStorage.getItem('vpn_configs')) || [];
+        const config = configs.find(c => c.id === id);
+        if (!config) return;
+
+        populateUserDropdown();
+
+        document.getElementById('editConfigId').value = config.id;
+        document.getElementById('nc-name').value = config.name;
+        document.getElementById('nc-user').value = config.user;
+        document.getElementById('nc-server').value = config.server;
+        document.getElementById('nc-type').value = config.type;
+        document.getElementById('nc-code').value = config.code;
+
+        document.getElementById('configModalTitle').innerText = 'Edit Config';
+        document.getElementById('configModal').classList.add('active');
+    }
+
+    // ==========================================
+    // DELETE CONFIG
+    // ==========================================
+    function deleteConfig(id) {
+        if (!confirm('Delete this config?')) return;
+
+        let configs = JSON.parse(localStorage.getItem('vpn_configs')) || [];
+        configs = configs.filter(c => c.id !== id);
+        localStorage.setItem('vpn_configs', JSON.stringify(configs));
+
+        showNotification('Config deleted!');
+        renderAll();
+    }
+
+    // ==========================================
+    // ADD SERVER
+    // ==========================================
+    function addServer() {
+        const name = document.getElementById('ns-name').value.trim();
+        const flag = document.getElementById('ns-flag').value.trim();
+        const location = document.getElementById('ns-location').value.trim();
+        const status = document.getElementById('ns-status').value;
+
+        if (!name || !flag) {
+            showNotification('Please fill server name and flag!', 'error');
+            return;
+        }
+
+        const servers = JSON.parse(localStorage.getItem('vpn_servers')) || [];
+        servers.push({
+            id: generateId(),
+            name,
+            flag,
+            location,
+            status,
+            type: 'V2Ray'
+        });
+
+        localStorage.setItem('vpn_servers', JSON.stringify(servers));
+        showNotification('Server added!');
+
+        // Clear form
+        document.getElementById('ns-name').value = '';
+        document.getElementById('ns-flag').value = '';
+        document.getElementById('ns-location').value = '';
+        
+        renderAll();
+    }
+
+    // ==========================================
+    // DELETE SERVER
+    // ==========================================
+    function deleteServer(id) {
+        if (!confirm('Delete this server?')) return;
+
+        let servers = JSON.parse(localStorage.getItem('vpn_servers')) || [];
+        servers = servers.filter(s => s.id !== id);
+        localStorage.setItem('vpn_servers', JSON.stringify(servers));
+
+        showNotification('Server deleted!');
+        renderAll();
+    }
+
+    // ==========================================
+    // SAVE NOTICE
+    // ==========================================
+    function saveNotice() {
+        const title = document.getElementById('notice-title').value.trim();
+        const message = document.getElementById('notice-message').value.trim();
+
+        if (!title || !message) {
+            showNotification('Please fill title and message!', 'error');
+            return;
+        }
+
+        const notices = JSON.parse(localStorage.getItem('vpn_notices')) || [];
+        notices.unshift({
+            id: generateId(),
+            title,
+            message,
+            date: new Date().toISOString()
+        });
+
+        localStorage.setItem('vpn_notices', JSON.stringify(notices));
+        showNotification('Notice posted!');
+
+        document.getElementById('notice-title').value = '';
+        document.getElementById('notice-message').value = '';
+
+        renderAll();
+    }
+
+    // ==========================================
+    // DELETE NOTICE
+    // ==========================================
+    function deleteNotice(id) {
+        if (!confirm('Delete this notice?')) return;
+
+        let notices = JSON.parse(localStorage.getItem('vpn_notices')) || [];
+        notices = notices.filter(n => n.id !== id);
+        localStorage.setItem('vpn_notices', JSON.stringify(notices));
+
+        showNotification('Notice deleted!');
+        renderAll();
+    }
+
+    // ==========================================
+    // RENDER ALL DATA
+    // ==========================================
+    function renderAll() {
+        renderStats();
+        renderUsers();
+        renderConfigs();
+        renderServers();
+        renderNotices();
+        renderRecentUsers();
+    }
+
+    // ==========================================
+    // RENDER STATS
+    // ==========================================
+    function renderStats() {
+        const users = JSON.parse(localStorage.getItem('vpn_users')) || [];
+        const configs = JSON.parse(localStorage.getItem('vpn_configs')) || [];
+        const servers = JSON.parse(localStorage.getItem('vpn_servers')) || [];
+
+        document.getElementById('statUsers').innerText = users.length;
+        document.getElementById('statConfigs').innerText = configs.length;
+        document.getElementById('statServers').innerText = servers.filter(s => s.status === 'online').length;
+
+        document.getElementById('userBadge').innerText = users.length;
+        document.getElementById('configBadge').innerText = configs.length;
+    }
+
+    // ==========================================
+    // RENDER USERS
+    // ==========================================
+    function renderUsers() {
+        const users = JSON.parse(localStorage.getItem('vpn_users')) || [];
+        const configs = JSON.parse(localStorage.getItem('vpn_configs')) || [];
+        const container = document.getElementById('userListRender');
+        document.getElementById('userCount').innerText = users.length + ' users';
+
+        if (users.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <p>No users yet. Add your first user!</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = users.map(user => {
+            const userConfigCount = configs.filter(c => c.user === user.username).length;
+            const usagePercent = user.totalData > 0 ? ((user.usedData || 0) / user.totalData * 100).toFixed(0) : 0;
+            
+            return `
+                <div class="user-item">
+                    <div class="u-avatar">${user.name.charAt(0).toUpperCase()}</div>
+                    <div class="u-info">
+                        <b>${user.name}</b>
+                        <span>@${user.username} • Password: ${user.password}</span>
+                        <div class="u-meta">
+                            <span><i class="fas fa-key"></i> ${userConfigCount} Configs</span>
+                            <span><i class="fas fa-database"></i> ${user.usedData || 0}/${user.totalData || 0} GB (${usagePercent}%)</span>
+                            <span><i class="fas fa-calendar"></i> ${formatDate(user.expiryDate)}</span>
+                            <span class="status-badge status-${user.status || 'active'}">${(user.status || 'active').toUpperCase()}</span>
+                        </div>
+                    </div>
+                    <div class="u-actions">
+                        <input type="number" class="input" style="width:80px;padding:10px;text-align:center;" 
+                               value="${user.usedData || 0}" 
+                               onchange="updateUsedData('${user.id}', this.value)"
+                               title="Used GB">
+                        <button class="action-btn config" onclick="viewUserConfigs('${user.username}')" title="View Configs">
+                            <i class="fas fa-key"></i>
+                        </button>
+                        <button class="action-btn edit" onclick="editUser('${user.id}')" title="Edit User">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="deleteUser('${user.id}')" title="Delete User">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ==========================================
+    // RENDER CONFIGS
+    // ==========================================
+    function renderConfigs() {
+        const configs = JSON.parse(localStorage.getItem('vpn_configs')) || [];
+        const container = document.getElementById('configListRender');
+        document.getElementById('configCount').innerText = configs.length + ' configs';
+
+        if (configs.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-key"></i>
+                    <p>No configs yet. Add your first config!</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = configs.map(config => `
+            <div class="user-item">
+                <div class="u-avatar" style="background:linear-gradient(135deg, var(--purple), var(--cyan));">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="u-info">
+                    <b>${config.name}</b>
+                    <span>Assigned to: @${config.user}</span>
+                    <div class="u-meta">
+                        <span><i class="fas fa-server"></i> ${config.server}</span>
+                        <span><i class="fas fa-code"></i> ${config.type}</span>
+                        <span><i class="fas fa-calendar"></i> ${formatDate(config.createdAt)}</span>
+                    </div>
+                </div>
+                <div class="u-actions">
+                    <button class="action-btn edit" onclick="editConfig('${config.id}')" title="Edit Config">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" onclick="deleteConfig('${config.id}')" title="Delete Config">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER SERVERS
+    // ==========================================
+    function renderServers() {
+        const servers = JSON.parse(localStorage.getItem('vpn_servers')) || [];
+        const container = document.getElementById('serverListRender');
+
+        if (servers.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-server"></i>
+                    <p>No servers yet. Add your first server!</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = servers.map(server => `
+            <div class="srv-item">
+                <div class="srv-flag">${server.flag}</div>
+                <div class="srv-info">
+                    <b>${server.name}</b>
+                    <span>${server.location} • ${server.type || 'V2Ray'}</span>
+                </div>
+                <span class="status-badge status-${server.status === 'online' ? 'active' : 'inactive'}">
+                    ${server.status.toUpperCase()}
+                </span>
+                <button class="action-btn delete" onclick="deleteServer('${server.id}')" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER NOTICES
+    // ==========================================
+    function renderNotices() {
+        const notices = JSON.parse(localStorage.getItem('vpn_notices')) || [];
+        const container = document.getElementById('noticeListRender');
+
+        if (notices.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-bullhorn"></i>
+                    <p>No notices yet</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = notices.map(notice => `
+            <div class="user-item" style="flex-direction:column;align-items:flex-start;">
+                <div style="display:flex;justify-content:space-between;width:100%;align-items:flex-start;">
+                    <div>
+                        <b style="color:var(--cyan);">${notice.title}</b>
+                        <span style="display:block;font-size:0.7rem;color:#555;margin-top:5px;">${formatDate(notice.date)}</span>
+                    </div>
+                    <button class="action-btn delete" onclick="deleteNotice('${notice.id}')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <p style="margin-top:10px;font-size:0.85rem;color:#aaa;">${notice.message}</p>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER RECENT USERS (Dashboard)
+    // ==========================================
+    function renderRecentUsers() {
+        const users = JSON.parse(localStorage.getItem('vpn_users')) || [];
+        const container = document.getElementById('recentUsers');
+
+        if (users.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="padding:30px;">
+                    <i class="fas fa-users" style="font-size:2rem;"></i>
+                    <p>No users yet</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Show last 5 users
+        container.innerHTML = users.slice(-5).reverse().map(user => `
+            <div class="user-item">
+                <div class="u-avatar">${user.name.charAt(0).toUpperCase()}</div>
+                <div class="u-info">
+                    <b>${user.name}</b>
+                    <span>@${user.username} • ${user.plan || 'Premium'}</span>
+                </div>
+                <span class="status-badge status-${user.status || 'active'}">${(user.status || 'active').toUpperCase()}</span>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // INITIALIZE
+    // ==========================================
+    window.onload = renderAll;
+</script>
+
+</body>
+</html>

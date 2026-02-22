@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Akith Creation VPN Store — Premium VPN Data Plans</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg0:#02020a;--bg1:#050510;--card:#070a24;
+      --muted:#a6a8c7;--text:#fff;
+      --cyan:#00e0ff;--gold:#f2c94c;
+      --wa:#25d366;--fb:#1877f2;
+      --stroke:rgba(255,255,255,.08);
+      --stroke2:rgba(255,255,255,.12);
+      --shadow:0 26px 90px rgba(0,0,0,.92);
+      --r:18px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at top,#1a2240 0,#050510 55%,#02020a 100%);color:var(--text);overflow-x:hidden}
+    a{text-decoration:none}
+
+    /* === announcement bar === */
+    .announce{
+      position:fixed;top:0;left:0;width:100%;z-index:1100;
+      padding:8px 6%;
+      background:linear-gradient(90deg,var(--cyan),var(--gold));
+      color:#050510;font-size:.78rem;font-weight:800;
+      text-align:center;letter-spacing:.04em;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+    }
+    .announce a{color:#050510;text-decoration:underline}
+    .announce .close-ann{cursor:pointer;margin-left:auto;font-size:1rem;opacity:.7}
+
+    /* === particles === */
+    .particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .particle{position:absolute;width:3px;height:3px;background:rgba(0,224,255,.28);border-radius:50%;animation:float linear infinite}
+    @keyframes float{
+      0%{transform:translateY(100vh) translateX(0) scale(1);opacity:0}
+      10%{opacity:.9}50%{transform:translateY(50vh) translateX(20px) scale(1.05)}
+      100%{transform:translateY(-10vh) translateX(-20px) scale(1);opacity:0}
+    }
+
+    /* === navbar === */
+    .navbar{
+      position:fixed;top:32px;width:100%;padding:12px 6%;
+      display:flex;justify-content:space-between;align-items:center;
+      z-index:1000;background:rgba(3,5,20,.92);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      transition:top .3s;
+    }
+    .navbar.no-ann{top:0}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#f5f5f5;font-size:1.22rem}
+    .logo .tag{padding:2px 8px;border-radius:999px;background:linear-gradient(135deg,var(--cyan),var(--gold));color:#050510;font-size:.66rem;font-weight:900}
+    .nav-links{display:flex;list-style:none;gap:22px}
+    .nav-links a{color:#c8c8d8;font-weight:600;font-size:.88rem;transition:.2s;position:relative}
+    .nav-links a:hover{color:var(--gold)}
+    .nav-links a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:2px;background:var(--gold);transition:.25s}
+    .nav-links a:hover::after{width:100%}
+    .nav-right{display:flex;align-items:center;gap:14px}
+    .login-btn{padding:8px 18px;border-radius:999px;border:1px solid var(--gold);color:var(--gold);font-weight:800;font-size:.82rem;transition:.2s}
+    .login-btn:hover{background:var(--gold);color:#050510}
+    .menu-toggle{display:none;color:#fff;font-size:1.6rem;cursor:pointer}
+
+    /* === buttons === */
+    .btn-primary{padding:14px 34px;background:linear-gradient(135deg,var(--cyan),var(--gold));color:#050510;border:none;border-radius:999px;font-size:1rem;font-weight:900;cursor:pointer;transition:.2s;box-shadow:0 14px 40px rgba(0,0,0,.7);display:inline-flex;align-items:center;gap:10px;justify-content:center}
+    .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.02)}
+    .btn-secondary{padding:13px 28px;background:transparent;color:#f5f5ff;border-radius:999px;border:1px solid rgba(255,255,255,.22);font-size:.95rem;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:10px;justify-content:center}
+    .btn-secondary:hover{border-color:var(--gold);color:var(--gold);background:rgba(0,0,0,.35)}
+
+    /* === common === */
+    section{position:relative;z-index:2}
+    .section-title{text-align:center;margin-bottom:50px;padding:0 6%}
+    .section-title h2{font-size:2.1rem;font-weight:900;margin-bottom:10px}
+    .section-title h2 span{background:linear-gradient(135deg,var(--cyan),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .section-title p{color:#9b9db9;font-size:.95rem;max-width:720px;margin:0 auto;line-height:1.7}
+    .gradient-text{background:linear-gradient(135deg,var(--cyan),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+    /* === HERO === */
+    .hero{min-height:100vh;padding:160px 6% 70px;display:flex;align-items:center;overflow:hidden}
+    .lux-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+    .lux-orb{position:absolute;width:520px;height:520px;border-radius:50%;filter:blur(22px);opacity:.75;mix-blend-mode:screen;animation:orbMove 16s ease-in-out infinite}
+    .lux-orb.one{top:-220px;right:-180px;background:radial-gradient(circle,rgba(0,224,255,.35),transparent 65%)}
+    .lux-orb.two{bottom:-240px;left:-170px;background:radial-gradient(circle,rgba(242,201,76,.35),transparent 65%);animation-delay:-5s}
+    .lux-streak{position:absolute;top:10%;left:-30%;width:160%;height:200px;transform:rotate(-12deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);animation:streak 8s linear infinite;opacity:.7}
+    @keyframes streak{0%{transform:translateX(-18%) rotate(-12deg);opacity:.25}50%{opacity:.75}100%{transform:translateX(18%) rotate(-12deg);opacity:.25}}
+    @keyframes orbMove{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-24px,22px) scale(1.05)}}
+
+    .hero-inner{width:100%;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:34px;position:relative;z-index:2;align-items:center}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(5,255,205,.08);border-radius:999px;border:1px solid rgba(242,201,76,.35);font-size:.78rem;color:#ffeaa7;margin-bottom:14px}
+    .hero-badge i{color:var(--gold)}
+    .hero-sub{font-size:.95rem;text-transform:uppercase;letter-spacing:.18em;color:#a8b0ff;margin-bottom:10px;font-weight:800}
+    .hero h1{font-size:3.35rem;line-height:1.12;letter-spacing:-.02em;font-weight:900;margin-bottom:14px}
+    .hero p{font-size:1.06rem;color:#b3b4c5;line-height:1.8;max-width:56ch;margin-bottom:18px}
+    .hero p .si{color:#fffffe;font-weight:600}
+    .badge-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 18px}
+    .lux-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;font-size:.78rem;color:#e9eaff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px)}
+    .lux-badge i{color:var(--gold)}
+    .hero-buttons{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px}
+    .hero-note{font-size:.82rem;color:#8f90a5}
+
+    /* right showcase */
+    .showcase{width:100%;max-width:420px;border-radius:26px;background:linear-gradient(145deg,rgba(10,12,45,.86),rgba(20,16,55,.95));border:1px solid rgba(242,201,76,.42);box-shadow:var(--shadow);overflow:hidden;position:relative;margin-left:auto}
+    .showcase::before{content:'';position:absolute;inset:-40%;background:radial-gradient(circle at 20% 20%,rgba(0,224,255,.16),transparent 55%),radial-gradient(circle at 80% 80%,rgba(242,201,76,.22),transparent 55%);pointer-events:none}
+    .showcase-inner{position:relative;z-index:2;padding:22px 20px 18px}
+    .showcase-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+    .showcase-title{font-size:.9rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#ffeaa7}
+    .showcase-pill{font-size:.72rem;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.14);color:#cfd0f7}
+    .plan-grid{display:grid;grid-template-columns:1fr;gap:12px}
+    .plan-tile{padding:14px;border-radius:var(--r);background:rgba(6,9,32,.92);border:1px solid rgba(255,255,255,.08);transition:.25s}
+    .plan-tile:hover{transform:translateY(-2px);border-color:rgba(0,224,255,.45)}
+    .plan-tile.highlight{background:linear-gradient(145deg,rgba(0,224,255,.10),rgba(242,201,76,.08));border-color:rgba(242,201,76,.60)}
+    .plan-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+    .plan-name{font-size:1rem;font-weight:800}
+    .plan-price{font-size:1.25rem;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+    .plan-meta{font-size:.82rem;color:#aeb0ce;margin-top:6px;line-height:1.55}
+    .showcase-cta{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+    .cta-big{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 14px;border-radius:16px;font-weight:900;border:1px solid rgba(255,255,255,.12);transition:.22s}
+    .cta-big:hover{transform:translateY(-1px)}
+    .cta-big.wa{background:linear-gradient(135deg,rgba(37,211,102,.22),rgba(37,211,102,.10));border-color:rgba(37,211,102,.65);color:#eafff3}
+    .cta-big.channel{background:linear-gradient(135deg,rgba(0,224,255,.14),rgba(0,0,0,.2));border-color:rgba(0,224,255,.55);color:#e7fbff}
+    .trust-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;color:#aeb0ce;font-size:.78rem}
+    .trust-row span{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+    .trust-row i{color:var(--cyan)}
+
+    /* === stats === */
+    .stats{padding:18px 6% 40px;display:flex;gap:18px;flex-wrap:wrap;max-width:1200px;margin:0 auto}
+    .stat{flex:1 1 220px;border-radius:var(--r);background:rgba(8,11,35,.90);border:1px solid rgba(255,255,255,.06);padding:16px;position:relative;overflow:hidden}
+    .stat::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,224,255,.08),transparent 55%);opacity:.7;pointer-events:none}
+    .stat .inner{position:relative;z-index:2}
+    .stat .label{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#8a8cb0;margin-bottom:6px;font-weight:800}
+    .stat h3{font-size:1.4rem;font-weight:900;margin-bottom:4px;background:linear-gradient(135deg,var(--cyan),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .stat p{font-size:.82rem;color:#9d9fbb;line-height:1.55}
+
+    /* === features === */
+    .features{padding:70px 0 80px}
+    .features-grid{max-width:1180px;margin:0 auto;padding:0 6%;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+    .feature-card{background:rgba(7,10,35,.9);border-radius:20px;padding:22px 20px;border:1px solid rgba(255,255,255,.06);transition:.3s;position:relative;overflow:hidden}
+    .feature-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(242,201,76,.10),transparent 55%);opacity:0;transition:.35s}
+    .feature-card:hover{transform:translateY(-4px);border-color:rgba(242,201,76,.55);box-shadow:0 18px 45px rgba(0,0,0,.85)}
+    .feature-card:hover::before{opacity:1}
+    .feature-inner{position:relative;z-index:2}
+    .feature-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(9,19,80,.9);color:var(--gold);margin-bottom:12px}
+    .feature-card h3{font-size:1rem;font-weight:800;margin-bottom:8px}
+    .feature-card p{font-size:.88rem;color:#a6a8c7;line-height:1.65}
+
+    /* === server status === */
+    .server-status{padding:70px 0 80px;background:radial-gradient(circle at center,rgba(0,224,255,.04),transparent 60%)}
+    .status-grid{max-width:1000px;margin:0 auto;padding:0 6%;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .status-card{background:rgba(7,10,35,.92);border-radius:var(--r);padding:16px;border:1px solid rgba(255,255,255,.06)}
+    .status-card .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .status-card h4{font-size:.92rem;font-weight:800}
+    .status-dot{width:10px;height:10px;border-radius:50%;background:#25d366;box-shadow:0 0 8px rgba(37,211,102,.6);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+    .status-card .bar{height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+    .status-card .bar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--gold))}
+    .status-card .info{margin-top:8px;font-size:.78rem;color:#9d9fbb;display:flex;justify-content:space-between}
+
+    /* === supported apps === */
+    .apps{padding:70px 0 80px}
+    .apps-grid{max-width:1000px;margin:0 auto;padding:0 6%;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+    .app-card{background:rgba(7,10,35,.92);border-radius:var(--r);padding:20px 16px;text-align:center;border:1px solid rgba(255,255,255,.06);transition:.25s}
+    .app-card:hover{border-color:rgba(0,224,255,.45);transform:translateY(-3px)}
+    .app-card i{font-size:2rem;margin-bottom:10px;color:var(--cyan)}
+    .app-card h4{font-size:.92rem;font-weight:800;margin-bottom:4px}
+    .app-card p{font-size:.78rem;color:#9d9fbb}
+
+    /* === pricing === */
+    .pricing{padding:70px 0 80px;background:radial-gradient(circle at top,rgba(0,224,255,.08),rgba(2,2,12,1))}
+    .pricing-grid{max-width:980px;margin:0 auto;padding:0 6%;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+    .price-card{background:rgba(6,9,32,.96);border-radius:22px;padding:22px 20px 24px;border:1px solid rgba(255,255,255,.08);transition:.28s;position:relative;overflow:hidden}
+    .price-card:hover{transform:translateY(-4px);border-color:rgba(0,224,255,.42);box-shadow:0 20px 60px rgba(0,0,0,.86)}
+    .price-card.popular{border-color:rgba(242,201,76,.65);background:linear-gradient(145deg,#080b30,#1c1446)}
+    .popular-badge{position:absolute;top:14px;right:14px;padding:4px 10px;border-radius:999px;background:rgba(242,201,76,.14);border:1px solid rgba(242,201,76,.9);font-size:.66rem;text-transform:uppercase;letter-spacing:.14em;font-weight:900;color:#ffeaa7}
+    .price-card h3{font-size:1rem;font-weight:900;margin-bottom:6px}
+    .price-sub{font-size:.82rem;color:#9d9fbb;margin-bottom:12px}
+    .price{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+    .price small{font-size:.78rem;-webkit-text-fill-color:#b3b5d4}
+    .price-cap{font-size:.92rem;color:#e4e6ff;margin-bottom:12px;font-weight:600}
+    .price-card ul{list-style:none;margin-bottom:14px}
+    .price-card ul li{display:flex;align-items:center;gap:8px;color:#aeb0ce;font-size:.86rem;padding:5px 0}
+    .price-card ul li i{color:var(--cyan)}
+    .price-btn{display:inline-flex;align-items:center;gap:10px;justify-content:center;width:100%;padding:11px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.18);color:#f5f5ff;font-weight:900;transition:.22s;background:rgba(255,255,255,.04)}
+    .price-card.popular .price-btn{background:linear-gradient(135deg,var(--cyan),var(--gold));color:#050510;border-color:transparent}
+    .price-btn:hover{transform:translateY(-1px);border-color:var(--gold)}
+
+    /* === how-to steps === */
+    .how-to{padding:70px 0 80px}
+    .steps{max-width:1000px;margin:0 auto;padding:0 6%;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px}
+    .step{padding:20px;border-radius:var(--r);background:rgba(8,11,35,.96);border:1px dashed rgba(255,255,255,.12);text-align:left}
+    .step-number{width:30px;height:30px;border-radius:999px;border:1px solid rgba(242,201,76,.8);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#ffeaa7;margin-bottom:10px}
+    .step h3{font-size:.95rem;margin-bottom:8px;font-weight:800}
+    .step p{color:#a6a8c7;font-size:.84rem;line-height:1.6}
+
+    /* === reviews === */
+    .reviews{padding:70px 0 80px}
+    .reviews-wrap{max-width:1180px;margin:0 auto;padding:0 6%;display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+    .review-hero{border-radius:22px;background:rgba(8,11,35,.92);border:1px solid rgba(255,255,255,.06);padding:22px 20px}
+    .review-hero h3{font-size:1.12rem;font-weight:900;margin-bottom:10px}
+    .review-hero p{color:#a6a8c7;font-size:.9rem;line-height:1.75}
+    .review-hero .mini{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;color:#cfd0f7;font-size:.82rem}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+    .chip i{color:var(--gold)}
+    .slider{border-radius:22px;background:linear-gradient(145deg,rgba(10,12,45,.82),rgba(20,16,55,.95));border:1px solid rgba(242,201,76,.28);box-shadow:0 18px 70px rgba(0,0,0,.75);padding:18px;position:relative;overflow:hidden}
+    .slide{display:none;padding:10px 6px}
+    .slide.active{display:block;animation:fadeUp .45s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .quote{font-size:.95rem;line-height:1.8;color:#e7e8ff;margin-bottom:12px}
+    .who{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#aeb0ce;font-size:.82rem}
+    .stars{color:var(--gold);letter-spacing:.08em;font-size:.85rem}
+    .slider-controls{display:flex;gap:10px;margin-top:10px}
+    .sbtn{flex:1;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);color:#f5f5ff;cursor:pointer;font-weight:900;transition:.2s}
+    .sbtn:hover{border-color:var(--gold);transform:translateY(-1px)}
+
+    /* === FAQ === */
+    .faq{padding:70px 0 80px;background:radial-gradient(circle at bottom,rgba(242,201,76,.08),#040410 65%)}
+    .faq-wrap{max-width:980px;margin:0 auto;padding:0 6%}
+    .faq-item{border-radius:var(--r);background:rgba(7,10,35,.92);border:1px solid rgba(255,255,255,.06);margin-bottom:12px;overflow:hidden}
+    .faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;cursor:pointer;color:#fff;font-weight:900;background:transparent;border:none;text-align:left;font-family:inherit;font-size:.92rem}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 16px}
+    .faq-a p{padding:0 0 16px;color:#a6a8c7;line-height:1.75;font-size:.9rem}
+    .faq-item.open .faq-a{max-height:220px}
+    .faq-icon{color:var(--gold);font-size:1rem;transition:.3s}
+    .faq-item.open .faq-icon{transform:rotate(45deg)}
+
+    /* === terms === */
+    .terms{padding:50px 0 60px}
+    .terms-inner{max-width:800px;margin:0 auto;padding:0 6%;color:#9d9fbb;font-size:.82rem;line-height:1.8}
+    .terms-inner h3{color:#e7e8ff;font-size:1rem;margin-bottom:12px;font-weight:800}
+    .terms-inner p{margin-bottom:10px}
+
+    /* === contact === */
+    .contact{padding:70px 0 70px}
+    .contact-wrap{max-width:980px;margin:0 auto;padding:0 6%}
+    .contact-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:28px}
+    .contact-btn{display:flex;align-items:center;justify-content:center;gap:12px;padding:14px;border-radius:var(--r);background:rgba(7,9,30,.96);border:1px solid rgba(255,255,255,.12);color:#f7f7ff;font-weight:800;transition:.22s;text-align:center}
+    .contact-btn small{display:block;font-weight:600;color:#aeb0ce;margin-top:2px}
+    .contact-btn:hover{transform:translateY(-2px);border-color:var(--gold);background:rgba(0,0,0,.45)}
+    .contact-btn.wa{background:rgba(37,211,102,.10);border-color:rgba(37,211,102,.55)}
+    .contact-btn.channel{background:rgba(0,224,255,.08);border-color:rgba(0,224,255,.55)}
+    .contact-btn.fb{background:rgba(24,119,242,.10);border-color:rgba(24,119,242,.55)}
+    .contact-btn i{font-size:1.2rem}
+
+    /* === footer === */
+    .footer{padding:22px 6% 24px;text-align:center;border-top:1px solid rgba(255,255,255,.06);color:#7e8097;font-size:.8rem;position:relative;z-index:2}
+
+    /* === floating wa === */
+    .float-wa{position:fixed;right:18px;bottom:18px;z-index:1200;width:56px;height:56px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;background:#25d366;color:#06190f;font-size:1.6rem;box-shadow:0 18px 60px rgba(0,0,0,.8);transition:.2s}
+    .float-wa:hover{transform:translateY(-2px);filter:brightness(1.02)}
+
+    /* === back to top === */
+    .back-top{position:fixed;left:18px;bottom:18px;z-index:1200;width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(7,10,35,.92);border:1px solid rgba(255,255,255,.12);color:var(--gold);font-size:1rem;cursor:pointer;opacity:0;pointer-events:none;transition:.25s}
+    .back-top.show{opacity:1;pointer-events:auto}
+    .back-top:hover{border-color:var(--gold)}
+
+    /* === reveal === */
+    .reveal{opacity:0;transform:translateY(18px);transition:all .65s ease}
+    .reveal.show{opacity:1;transform:translateY(0)}
+
+    /* === responsive === */
+    @media(max-width:980px){
+      .hero-inner{grid-template-columns:1fr}
+      .showcase{max-width:560px;margin:0}
+      .hero h1{font-size:2.55rem}
+      .reviews-wrap{grid-template-columns:1fr}
+    }
+    @media(max-width:768px){
+      .nav-links{display:none}
+      .menu-toggle{display:block}
+      .nav-links.active{display:flex;flex-direction:column;gap:12px;position:absolute;top:58px;left:0;width:100%;background:rgba(5,7,25,.98);padding:14px 20px 18px}
+      .hero{padding-top:140px}
+      .hero h1{font-size:2.15rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Announcement Bar -->
+<div class="announce" id="announceBar">
+  <i class="fas fa-bullhorn"></i>
+  🔥 Limited Offer: Unlimited Plan @ Rs.600/month — <a href="https://wa.me/94764714386?text=Hi%20Akith%20Creation%20-%20Unlimited%20plan%20please" target="_blank">Order Now</a>
+  <span class="close-ann" onclick="closeAnnounce()">✕</span>
+</div>
+
+<div class="particles" id="particles"></div>
+
+<!-- Float Buttons -->
+<a class="float-wa" target="_blank" href="https://wa.me/94764714386?text=Hi%20Akith%20Creation%20VPN%20Store"><i class="fab fa-whatsapp"></i></a>
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+  <a href="#home" class="logo">Akith Creation <span class="tag">VPN STORE</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#status">Status</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="login.html" class="login-btn"><i class="fas fa-user"></i> Login</a>
+    <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="lux-bg"><div class="lux-orb one"></div><div class="lux-orb two"></div><div class="lux-streak"></div></div>
+  <div class="hero-inner">
+    <div class="hero-left reveal">
+      <div class="hero-badge"><i class="fas fa-shield-halved"></i> Premium Sri Lankan VPN & V2Ray Store</div>
+      <div class="hero-sub">AKITH CREATION VPN STORE</div>
+      <h1>Premium Speed.<br><span class="gradient-text">Luxury-Level</span> VPN Plans.</h1>
+      <p>Best value VPN data plans in Sri Lanka with stable routes, smooth streaming, and real WhatsApp support. <span class="si"></span></p>
+      <div class="badge-row">
+        <span class="lux-badge"><i class="fas fa-bolt"></i> Fast Routes</span>
+        <span class="lux-badge"><i class="fas fa-lock"></i> Encrypted</span>
+        <span class="lux-badge"><i class="fas fa-headset"></i> WhatsApp Support</span>
+        <span class="lux-badge"><i class="fas fa-clock"></i> Quick Delivery</span>
+      </div>
+      <div class="hero-buttons">
+        <a class="btn-primary" target="_blank" href="https://wa.me/94764714386?text=Hi%20Akith%20Creation%20VPN%20Store%20-%20Please%20send%20me%20your%20price%20plans."><i class="fab fa-whatsapp"></i> Order on WhatsApp</a>
+        <a class="btn-secondary" href="#pricing"><i class="fas fa-tags"></i> See Price Plans</a>
+      </div>
+      <div class="hero-note"></div>
+    </div>
+    <div class="hero-right reveal">
+      <div class="showcase">
+        <div class="showcase-inner">
+          <div class="showcase-top"><div class="showcase-title">Plans Showcase</div><div class="showcase-pill">2026 Updated</div></div>
+          <div class="plan-grid">
+            <div class="plan-tile"><div class="plan-head"><div class="plan-name">💾 100GB Plan</div><div class="plan-price">Rs. 250</div></div><div class="plan-meta">Best for normal browsing + social media usage.</div></div>
+            <div class="plan-tile"><div class="plan-head"><div class="plan-name">💾 200GB Plan</div><div class="plan-price">Rs. 450</div></div><div class="plan-meta">Most balanced pack for streaming + daily use.</div></div>
+            <div class="plan-tile highlight"><div class="plan-head"><div class="plan-name">♾ Unlimited Plan</div><div class="plan-price">Rs. 600</div></div><div class="plan-meta">Heavy streaming / gaming / downloads — best value.</div></div>
+          </div>
+          <div class="showcase-cta">
+            <a class="cta-big wa" target="_blank" href="https://wa.me/94764714386?text=Hi%20Akith%20Creation%20-%20Unlimited%20plan%20please"><i class="fab fa-whatsapp"></i> Buy Unlimited Now</a>
+            <a class="cta-big channel" target="_blank" href="https://whatsapp.com/channel/0029VaimNV6EQIamcXURzt0D"><i class="fab fa-whatsapp"></i> Join WhatsApp Channel</a>
+          </div>
+          <div class="trust-row">
+            <span><i class="fas fa-shield"></i> Secure</span><span><i class="fas fa-wifi"></i> Stable</span><span><i class="fas fa-user-check"></i> Trusted</span><span><i class="fas fa-message"></i> Support</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat reveal"><div class="inner"><div class="label">Starting From</div><h3>Rs. 250</h3><p>Entry pack with 100GB high-speed data.</p></div></div>
+  <div class="stat reveal"><div class="inner"><div class="label">Plans</div><h3>3 Premium Packs</h3><p>100GB / 200GB / Unlimited.</p></div></div>
+  <div class="stat reveal"><div class="inner"><div class="label">Support</div><h3>WhatsApp Direct</h3><p>Setup help & troubleshooting.</p></div></div>
+  <div class="stat reveal"><div class="inner"><div class="label">Delivery</div><h3>Instant Config</h3><p>After payment, config sent fast.</p></div></div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-title"><h2>Why <span>Akith Creation</span>?</h2><p></p></div>
+  <div class="features-grid">
+    <div class="feature-card reveal"><div class="feature-inner"><div class="feature-icon"><i class="fas fa-lock"></i></div><h3>Secure & Encrypted</h3><p>Strong encryption with privacy-focused configs for safe browsing.</p></div></div>
+    <div class="feature-card reveal"><div class="feature-inner"><div class="feature-icon"><i class="fas fa-tachograph-digital"></i></div><h3>Optimized Routes</h3><p>Tuned for Sri Lankan networks for better stability and speed.</p></div></div>
+    <div class="feature-card reveal"><div class="feature-inner"><div class="feature-icon"><i class="fas fa-video"></i></div><h3>Streaming Friendly</h3><p>Smooth loading for YouTube, TikTok, Facebook, Instagram.</p></div></div>
+    <div class="feature-card reveal"><div class="feature-inner"><div class="feature-icon"><i class="fas fa-gamepad"></i></div><h3>Gaming Smooth</h3><p>Better pings and stable sessions for mobile gaming.</p></div></div>
+    <div class="feature-card reveal"><div class="feature-inner"><div class="feature-icon"><i class="fas fa-headset"></i></div><h3>WhatsApp Support</h3><p>Setup help, config import guidance, troubleshooting directly.</p></div></div>
+    <div class="feature-card reveal"><div class="feature-inner"><div class="feature-icon"><i class="fas fa-shield-halved"></i></div><h3>Kill Switch Ready</h3><p>Your security stays intact even when connection drops.</p></div></div>
+    <div class="feature-card reveal"><div class="feature-inner"><div class="feature-icon"><i class="fas fa-eye-slash"></i></div><h3>No-Logs Policy</h3><p>We never track, collect, or share any of your browsing data.</p></div></div>
+    <div class="feature-card reveal"><div class="feature-inner"><div class="feature-icon"><i class="fas fa-globe"></i></div><h3>Bypass Restrictions</h3><p>Access blocked content and geo-restricted websites freely.</p></div></div>
+  </div>
+</section>
+
+<!-- SERVER STATUS -->
+<section class="server-status" id="status">
+  <div class="section-title"><h2>Server <span>Status</span></h2><p>Real-time server health of our premium VPN routes.</p></div>
+  <div class="status-grid">
+    <div class="status-card reveal">
+      <div class="top"><h4>🇸🇬 Singapore</h4><div class="status-dot"></div></div>
+      <div class="bar"><div class="fill" style="width:96%"></div></div>
+      <div class="info"><span>Uptime: 99.9%</span><span>Ping: 42ms</span></div>
+    </div>
+    <div class="status-card reveal">
+      <div class="top"><h4></h4><div class="status-dot"></div></div>
+      <div class="bar"><div class="fill" style="width:94%"></div></div>
+      <div class="info"><span>Uptime: 99.7%</span><span>Ping: 28ms</span></div>
+    </div>
+    <div class="status-card reveal">
+      <div class="top"><h4>🇺🇸 United States</h4><div class="status-dot"></div></div>
+      <div class="bar"><div class="fill" style="width:92%"></div></div>
+      <div class="info"><span>Uptime: 99.5%</span><span>Ping: 180ms</span></div>
+    </div>
+    <div class="status-card reveal">
+      <div class="top"><h4>🇳🇱 Netherlands</h4><div class="status-dot"></div></div>
+      <div class="bar"><div class="fill" style="width:95%"></div></div>
+      <div class="info"><span>Uptime: 99.8%</span><span>Ping: 160ms</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SUPPORTED APPS -->
+<section class="apps" id="apps">
+  <div class="section-title"><h2>Supported <span>Apps</span></h2><p>Import our config files to any of these popular VPN/V2Ray apps.</p></div>
+  <div class="apps-grid">
+    <div class="app-card reveal"><i class="fas fa-rocket"></i><h4>V2RayNG</h4><p>Android</p></div>
+    <div class="app-card reveal"><i class="fas fa-paper-plane"></i><h4>Streisand</h4><p>iOS</p></div>
+    <div class="app-card reveal"><i class="fas fa-bolt"></i><h4>NekoBox</h4><p>Android</p></div>
+    <div class="app-card reveal"><i class="fas fa-shield-halved"></i><h4>Clash Meta</h4><p>Android / PC</p></div>
+    <div class="app-card reveal"><i class="fas fa-globe"></i><h4>Hiddify</h4><p>Cross-platform</p></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-title"><h2>Premium <span>Price Plans</span></h2><p>Pick your data pack. All packs come with premium routes and support.</p></div>
+  <div class="pricing-grid">
+    <div class="price-card reveal"><h3>Lite Pack</h3><div class="price-sub">Normal browsing / social media</div><div class="price">Rs. 250 <small>/ month</small></div><div class="price-cap">💾 100GB High-Speed Data</div><ul><li><i class="fas fa-check"></i> Good for daily usage</li><li><i class="fas fa-check"></i> Secure & stable routes</li><li><i class="fas fa-check"></i> WhatsApp support</li></ul><a class="price-btn" target="_blank" href="https://wa.me/94764714386?text=Hi%20Akith%20Creation%20-%20100GB%20plan%20(Rs.250)"><i class="fab fa-whatsapp"></i> Get 100GB Plan</a></div>
+    <div class="price-card popular reveal"><div class="popular-badge">Most Chosen</div><h3>Pro Pack</h3><div class="price-sub">Best for streaming + daily use</div><div class="price">Rs. 450 <small>/ month</small></div><div class="price-cap">💾 200GB High-Speed Data</div><ul><li><i class="fas fa-check"></i> Recommended for most users</li><li><i class="fas fa-check"></i> Better stability & speed</li><li><i class="fas fa-check"></i> Priority routes</li></ul><a class="price-btn" target="_blank" href="https://wa.me/94764714386?text=Hi%20Akith%20Creation%20-%20200GB%20plan%20(Rs.450)"><i class="fab fa-whatsapp"></i> Get 200GB Plan</a></div>
+    <div class="price-card reveal"><h3>Infinity Pack</h3><div class="price-sub">Heavy users / streaming / downloads</div><div class="price">Rs. 600 <small>/ month</small></div><div class="price-cap">♾ Unlimited Data</div><ul><li><i class="fas fa-check"></i> Heavy usage friendly</li><li><i class="fas fa-check"></i> Highest priority routes</li><li><i class="fas fa-check"></i> Best value plan</li></ul><a class="price-btn" target="_blank" href="https://wa.me/94764714386?text=Hi%20Akith%20Creation%20-%20Unlimited%20plan%20(Rs.600)"><i class="fab fa-whatsapp"></i> Get Unlimited Plan</a></div>
+  </div>
+</section>
+
+<!-- HOW TO BUY -->
+<section class="how-to" id="how-to">
+  <div class="section-title"><h2>How to <span>Buy & Use</span></h2><p>3 simple steps from contact to connection.</p></div>
+  <div class="steps">
+    <div class="step reveal"><div class="step-number">01</div><h3>Choose Your Plan</h3><p>Pick 100GB, 200GB, or Unlimited from the pricing section above.</p></div>
+    <div class="step reveal"><div class="step-number">02</div><h3>Contact via WhatsApp</h3><p>Message <span style="color:#ffeaa7">+94 76 471 4386</span>. You'll get payment details and setup help.</p></div>
+    <div class="step reveal"><div class="step-number">03</div><h3>Get Config & Connect</h3><p>After payment, config file sent. Import to V2Ray app and enjoy premium VPN!</p></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="section-title"><h2>Customer <span>Reviews</span></h2><p>See what our users are saying about Akith Creation VPN Store.</p></div>
+  <div class="reviews-wrap">
+    <div class="review-hero reveal"><h3>Why people choose Akith Creation — it "just works"</h3><p>Stable routes, clear plans, and quick WhatsApp support. Premium VPN store experience at local-friendly prices.</p><div class="mini"><span class="chip"><i class="fas fa-star"></i> Rated 4.9/5</span><span class="chip"><i class="fas fa-bolt"></i> Fast Setup</span><span class="chip"><i class="fas fa-headset"></i> Helpful Support</span></div></div>
+    <div class="slider reveal">
+      <div class="slide active"><div class="quote">"Speed eka hodatama thiyenawa. YouTube/TikTok buffer na. WhatsApp support eka supiri."</div><div class="who"><span>— Nimal (Colombo)</span><span class="stars">★★★★★</span></div></div>
+      <div class="slide"><div class="quote">"200GB pack eka best. Setup karanna kiwwama hariyata guide karala dunna."</div><div class="who"><span>— Sahan (Gampaha)</span><span class="stars">★★★★★</span></div></div>
+      <div class="slide"><div class="quote">"Unlimited plan ekata giyama streaming okkoma smooth. Delivery eka fast."</div><div class="who"><span>— Tharindu (Kandy)</span><span class="stars">★★★★★</span></div></div>
+      <div class="slide"><div class="quote">"Mama gaming walata use karanawa. Ping eka hoda, disconnect wenne na."</div><div class="who"><span>— Kavindu (Matara)</span><span class="stars">★★★★★</span></div></div>
+      <div class="slider-controls"><button class="sbtn" onclick="prevSlide()"><i class="fas fa-arrow-left"></i> Prev</button><button class="sbtn" onclick="nextSlide()">Next <i class="fas fa-arrow-right"></i></button></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="section-title"><h2>Common <span>Questions</span></h2><p>Customers ගොඩක් අහන ප්‍රශ්න සහ answers.</p></div>
+  <div class="faq-wrap">
+    <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)"><span>How do I buy a plan?</span><i class="fas fa-plus faq-icon"></i></button><div class="faq-a"><p>WhatsApp එකෙන් (+94 76 471 4386) message කරන්න. Plan confirm කරලා payment details දෙනවා. Payment ඉවර උනාම config send කරනවා.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)"><span>What apps can I use for the config?</span><i class="fas fa-plus faq-icon"></i></button><div class="faq-a"><p>V2RayNG, Streisand, NekoBox, Clash Meta, Hiddify වගේ ඕනම V2Ray compatible app එකක් use කරන්න පුළුවන්.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)"><span>Is the Unlimited plan truly unlimited?</span><i class="fas fa-plus faq-icon"></i></button><div class="faq-a"><p>ඔව්. Heavy streaming, gaming, downloads වලට best. Fair-use limits network conditions අනුව vary වෙන්න පුළුවන්.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)"><span>Do you offer support if it disconnects?</span><i class="fas fa-plus faq-icon"></i></button><div class="faq-a"><p>ඔව්. WhatsApp support එකෙන් settings, import issues, reconnect steps, alternate config guide කරනවා.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)"><span>Which networks work best?</span><i class="fas fa-plus faq-icon"></i></button><div class="faq-a"><p>Dialog, Mobitel, Airtel, Hutch සියලුම SL networks වලට optimize කරලා තියෙනවා. WiFi එකෙනුත් හොඳට වැඩ.</p></div></div>
+    <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)"><span>Can I use this on multiple devices?</span><i class="fas fa-plus faq-icon"></i></button><div class="faq-a"><p>Basic plans 1 device එකට. Multi-device usage ගැන WhatsApp එකෙන් Akith Creation ගෙන් details ගන්න.</p></div></div>
+  </div>
+</section>
+
+<!-- TERMS -->
+<section class="terms" id="terms">
+  <div class="terms-inner reveal">
+    <h3>📋 Terms of Service</h3>
+    <p>By purchasing any plan from Akith Creation VPN Store, you agree to the following terms: All plans are for personal use only. Reselling or sharing configs is strictly prohibited. Refunds are not available once config is delivered. Service quality depends on your ISP network conditions. We are not responsible for any misuse of the VPN service. Akith Creation VPN Store reserves the right to modify plans and pricing at any time.</p>
+    <p>For questions or concerns, contact us via WhatsApp: +94 76 471 4386.</p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="section-title"><h2>Contact <span>Akith Store</span></h2><p>Buy plans, get updates, and follow the store.</p></div>
+  <div class="contact-wrap">
+    <div class="contact-links">
+      <a class="contact-btn wa" target="_blank" href="https://wa.me/94764714386"><i class="fab fa-whatsapp"></i> WhatsApp Chat <small>+94 76 471 4386</small></a>
+      <a class="contact-btn channel" target="_blank" href="https://whatsapp.com/channel/0029VaimNV6EQIamcXURzt0D"><i class="fab fa-whatsapp"></i> WhatsApp Channel <small>Join for updates</small></a>
+      <a class="contact-btn fb" target="_blank" href="https://facebook.com/AkithStore"><i class="fab fa-facebook-f"></i> Facebook Page <small>Akith Store</small></a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><p>© 2026 Akith Creation VPN Store. All Rights Reserved.</p></footer>
+
+<script>
+  function toggleMenu(){document.getElementById('navLinks').classList.toggle('active')}
+  function closeAnnounce(){document.getElementById('announceBar').style.display='none';document.getElementById('navbar').classList.add('no-ann')}
+
+  // particles
+  !function(){const c=document.getElementById('particles');for(let i=0;i<45;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';const s=Math.random()*3+2;p.style.width=s+'px';p.style.height=s+'px';p.style.animationDuration=(Math.random()*18+10)+'s';p.style.animationDelay=(Math.random()*12)+'s';c.appendChild(p)}}();
+
+  // smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});document.getElementById('navLinks').classList.remove('active')}})});
+
+  // reveal on scroll
+  const io=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // back to top
+  window.addEventListener('scroll',()=>{document.getElementById('backTop').classList.toggle('show',window.scrollY>600)});
+
+  // reviews slider
+  let si=0;
+  const slides=()=>[...document.querySelectorAll('.slide')];
+  function showSlide(i){const a=slides();a.forEach(s=>s.classList.remove('active'));si=(i+a.length)%a.length;a[si].classList.add('active')}
+  function nextSlide(){showSlide(si+1)}
+  function prevSlide(){showSlide(si-1)}
+  setInterval(nextSlide,6000);
+
+  // FAQ
+  function toggleFaq(btn){const item=btn.closest('.faq-item');const icon=btn.querySelector('.faq-icon');const open=item.classList.toggle('open');icon.classList.toggle('fa-plus',!open);icon.classList.toggle('fa-minus',open)}
+</script>
+</body>
+</html>

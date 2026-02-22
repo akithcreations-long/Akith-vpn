@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard — Akith Creation VPN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cyan: #00e0ff;
+            --gold: #f2c94c;
+            --purple: #7b2fff;
+            --green: #25d366;
+            --red: #ff4d4d;
+            --orange: #ff9500;
+            --bg: #02030d;
+            --card: rgba(15, 18, 40, 0.7);
+            --stroke: rgba(255, 255, 255, 0.08);
+            --sidebar-w: 260px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        .bg-glow {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            animation: drift 20s infinite alternate;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            right: -50px;
+            background: var(--cyan);
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -50px;
+            left: -50px;
+            background: var(--purple);
+        }
+
+        @keyframes drift {
+            from { transform: translate(0, 0); }
+            to { transform: translate(50px, 50px); }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: rgba(5, 7, 20, 0.95);
+            border-right: 1px solid var(--stroke);
+            display: flex;
+            flex-direction: column;
+            padding: 25px 15px;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: 0.3s;
+            backdrop-filter: blur(20px);
+        }
+
+        .logo {
+            font-size: 1.1rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 18px;
+            border: 1px solid var(--stroke);
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--cyan), var(--gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 224, 255, 0.4);
+        }
+
+        .logo-text span {
+            display: block;
+            font-size: 0.55rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            color: #505575;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 15px 12px 10px;
+            font-weight: 800;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 15px;
+            border-radius: 15px;
+            color: #9d9fbb;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            margin-bottom: 4px;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(0, 224, 255, 0.08);
+            color: #fff;
+            border-color: rgba(0, 224, 255, 0.2);
+        }
+
+        .nav-link.active i {
+            color: var(--cyan);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .user-profile {
+            margin-top: auto;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid var(--stroke);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .u-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        .u-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .u-info h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .u-info p {
+            font-size: 0.7rem;
+            color: var(--green);
+        }
+
+        .logout-btn {
+            cursor: pointer;
+            color: var(--red);
+            transition: 0.2s;
+            padding: 8px;
+        }
+
+        .logout-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            padding: 30px;
+            width: calc(100% - var(--sidebar-w));
+            transition: 0.3s;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+        .header-left p {
+            color: #8a8cb0;
+            font-size: 0.8rem;
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--cyan);
+            padding: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: 28px;
+            border: 1px solid var(--stroke);
+            padding: 25px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        /* Stats Grid */
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 22px;
+            border-radius: 24px;
+            border: 1px solid var(--stroke);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--cyan), transparent);
+            opacity: 0.1;
+            border-radius: 0 24px 0 80px;
+        }
+
+        .s-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        .s-val {
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin-top: 5px;
+        }
+
+        .s-label {
+            font-size: 0.75rem;
+            color: #8a8cb0;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Progress Bar */
+        .p-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 1px solid var(--stroke);
+        }
+
+        .p-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            width: 0%;
+            transition: 1.5s cubic-bezier(0.1, 0.8, 0.2, 1);
+            border-radius: 20px;
+        }
+
+        /* Config Box */
+        .config-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--stroke);
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+        .config-box:hover {
+            border-color: rgba(0, 224, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .config-info h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-info h4 i {
+            color: var(--cyan);
+        }
+
+        .config-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .config-meta span {
+            font-size: 0.75rem;
+            color: #8a8cb0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .config-meta span i {
+            color: var(--cyan);
+            font-size: 0.7rem;
+        }
+
+        .config-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .code-area {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--cyan);
+            word-break: break-all;
+            background: #000;
+            padding: 15px;
+            border-radius: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid rgba(0, 224, 255, 0.2);
+        }
+
+        /* Server Item */
+        .srv-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--stroke);
+            border-radius: 20px;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+
+        .srv-item:hover {
+            background: rgba(0, 224, 255, 0.05);
+            border-color: rgba(0, 224, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .srv-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: rgba(0, 224, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .srv-info {
+            flex: 1;
+        }
+
+        .srv-info h4 {
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .srv-info p {
+            font-size: 0.75rem;
+            color: #8a8cb0;
+        }
+
+        .srv-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .status-online {
+            background: rgba(37, 211, 102, 0.15);
+            color: var(--green);
+        }
+
+        .status-offline {
+            background: rgba(255, 77, 77, 0.15);
+            color: var(--red);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            border-radius: 15px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.75rem;
+        }
+
+        .btn-cyan {
+            background: linear-gradient(135deg, var(--cyan), #00b8d4);
+            color: #000;
+        }
+
+        .btn-cyan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 224, 255, 0.4);
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid var(--stroke);
+        }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, var(--green), #1da851);
+            color: #fff;
+        }
+
+        .btn-green:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, var(--purple), #5a1fd4);
+            color: #fff;
+        }
+
+        /* Subscription Card */
+        .sub-card {
+            background: linear-gradient(135deg, rgba(0, 224, 255, 0.1), rgba(123, 47, 255, 0.1));
+            border: 2px solid var(--cyan);
+            padding: 35px;
+            border-radius: 30px;
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sub-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 224, 255, 0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .sub-badge {
+            display: inline-block;
+            padding: 8px 25px;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .sub-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 450px;
+            margin: 25px auto 0;
+        }
+
+        .sub-stat-item {
+            text-align: center;
+        }
+
+        .sub-stat-item .value {
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+
+        .sub-stat-item .label {
+            font-size: 0.7rem;
+            color: #8a8cb0;
+            text-transform: uppercase;
+        }
+
+        /* Invoice Item */
+        .invoice-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--stroke);
+            border-radius: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .inv-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .inv-paid {
+            background: rgba(37, 211, 102, 0.15);
+            color: var(--green);
+        }
+
+        .inv-pending {
+            background: rgba(255, 149, 0, 0.15);
+            color: var(--orange);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #555;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .empty-state h3 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        /* Download Cards */
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .download-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--stroke);
+            border-radius: 20px;
+            text-decoration: none;
+            color: #fff;
+            transition: 0.3s;
+        }
+
+        .download-card:hover {
+            background: rgba(0, 224, 255, 0.05);
+            border-color: var(--cyan);
+            transform: translateY(-5px);
+        }
+
+        .download-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .download-card h4 {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .download-card p {
+            font-size: 0.75rem;
+            color: #8a8cb0;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, var(--green), #1da851);
+            color: #fff;
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, var(--red), #e04343);
+            color: #fff;
+        }
+
+        .notification.info {
+            background: linear-gradient(135deg, var(--cyan), #00b8d4);
+            color: #000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Sidebar Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 99;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Config Count Badge */
+        .config-count {
+            background: var(--cyan);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            margin-left: auto;
+        }
+
+        /* Notice Board */
+        .notice-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--cyan);
+        }
+
+        .notice-item h4 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .notice-item p {
+            font-size: 0.8rem;
+            color: #8a8cb0;
+        }
+
+        .notice-item .date {
+            font-size: 0.7rem;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            .grid-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .header-left h1 {
+                font-size: 1.2rem;
+            }
+
+            .sub-stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .config-header {
+                flex-direction: column;
+            }
+
+            .config-actions {
+                width: 100%;
+            }
+
+            .config-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyan);
+            border-radius: 10px;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--cyan);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="#" class="logo">
+            <div class="logo-icon"><i class="fas fa-shield-halved"></i></div>
+            <div class="logo-text">
+                Akith Creation
+                <span>VPN CLIENT PANEL</span>
+            </div>
+        </a>
+
+        <div class="nav-label">General</div>
+        <div class="nav-link active" data-page="home" onclick="switchPage('home', this)">
+            <i class="fas fa-house"></i> Dashboard
+        </div>
+        <div class="nav-link" data-page="sub" onclick="switchPage('sub', this)">
+            <i class="fas fa-crown"></i> Subscription
+        </div>
+        <div class="nav-link" data-page="srv" onclick="switchPage('srv', this)">
+            <i class="fas fa-server"></i> Server Fleet
+        </div>
+        <div class="nav-link" data-page="cfg" onclick="switchPage('cfg', this)">
+            <i class="fas fa-key"></i> My Configs
+            <span class="config-count" id="configCountBadge">0</span>
+        </div>
+
+        <div class="nav-label">Payments & Help</div>
+        <div class="nav-link" data-page="inv" onclick="switchPage('inv', this)">
+            <i class="fas fa-file-invoice"></i> Invoices
+        </div>
+        <div class="nav-link" data-page="dl" onclick="switchPage('dl', this)">
+            <i class="fas fa-download"></i> Downloads
+        </div>
+        <a href="https://wa.me/94764714386" target="_blank" class="nav-link">
+            <i class="fab fa-whatsapp"></i> WhatsApp Support
+        </a>
+
+        <div class="user-profile">
+            <div class="u-avatar" id="uLetter">?</div>
+            <div class="u-info">
+                <h4 id="uName">Loading...</h4>
+                <p id="uStatus">● Connected</p>
+            </div>
+            <i class="fas fa-power-off logout-btn" onclick="logout()" title="Logout"></i>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="header">
+            <div class="menu-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars-staggered"></i>
+            </div>
+            <div class="header-left">
+                <h1 id="pageTitle">Dashboard</h1>
+                <p id="pageGreeting">Welcome back!</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-glass btn-sm" onclick="refreshData()" title="Refresh Data">
+                    <i class="fas fa-sync-alt" id="refreshIcon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Page -->
+        <section class="page active" id="pg-home">
+            <div class="grid-stats">
+                <div class="stat-card">
+                    <div class="s-icon" style="background:rgba(0,224,255,0.15);color:var(--cyan);">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <span class="s-label">Used Traffic</span>
+                    <div class="s-val" id="valUsed">0 GB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="s-icon" style="background:rgba(123,47,255,0.15);color:var(--purple);">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <span class="s-label">Total Limit</span>
+                    <div class="s-val" id="valTotal">0 GB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="s-icon" style="background:rgba(37,211,102,0.15);color:var(--green);">
+                        <i class="fas fa-calendar-days"></i>
+                    </div>
+                    <span class="s-label">Days Left</span>
+                    <div class="s-val" id="valDays" style="color:var(--green)">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="s-icon" style="background:rgba(242,201,76,0.15);color:var(--gold);">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <span class="s-label">My Configs</span>
+                    <div class="s-val" id="valConfigs" style="color:var(--cyan)">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <h3><i class="fas fa-chart-line" style="color:var(--cyan);margin-right:10px;"></i>Data Usage</h3>
+                    <span id="usagePct" style="color:var(--cyan);font-weight:800;">0%</span>
+                </div>
+                <div class="p-bar">
+                    <div class="p-fill" id="usageFill"></div>
+                </div>
+                <p id="usageDesc" style="color:#8a8cb0;font-size:0.8rem;">Loading usage data...</p>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-bolt" style="color:var(--gold);margin-right:10px;"></i>Quick Actions</h3>
+                <p style="color:#8a8cb0;font-size:0.8rem;margin:10px 0 20px;">ඉක්මනින් VPN භාවිතා කිරීමට පහත options භාවිතා කරන්න.</p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                    <button class="btn btn-cyan" onclick="switchPage('cfg', document.querySelector('[data-page=cfg]'))">
+                        <i class="fas fa-key"></i> View Configs
+                    </button>
+                    <button class="btn btn-glass" onclick="switchPage('srv', document.querySelector('[data-page=srv]'))">
+                        <i class="fas fa-globe"></i> Server Fleet
+                    </button>
+                    <button class="btn btn-green" onclick="switchPage('dl', document.querySelector('[data-page=dl]'))">
+                        <i class="fas fa-download"></i> Get Apps
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-bullhorn" style="color:var(--purple);margin-right:10px;"></i>Announcements</h3>
+                <div id="noticeBoard" style="margin-top:15px;">
+                    <p style="color:#555;">Loading...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subscription Page -->
+        <section class="page" id="pg-sub">
+            <div class="sub-card">
+                <div class="sub-badge" id="subBadge">PREMIUM MEMBER</div>
+                <h2 style="font-size:2rem;margin:15px 0;position:relative;" id="subPlanName">Loading...</h2>
+                <p style="color:#8a8cb0;position:relative;" id="subExpiry">Loading expiry...</p>
+                <div class="sub-stats">
+                    <div class="sub-stat-item">
+                        <div class="value" style="color:var(--cyan)" id="subData">0 GB</div>
+                        <div class="label">Monthly Data</div>
+                    </div>
+                    <div class="sub-stat-item">
+                        <div class="value" style="color:var(--green)" id="subDaysLeft">0</div>
+                        <div class="label">Days Left</div>
+                    </div>
+                    <div class="sub-stat-item">
+                        <div class="value" style="color:var(--gold)" id="subStatus">ACTIVE</div>
+                        <div class="label">Status</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-gift" style="color:var(--green);margin-right:10px;"></i>Your Benefits</h3>
+                <div style="margin-top:20px;">
+                    <div style="display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid var(--stroke);">
+                        <i class="fas fa-check-circle" style="color:var(--green);font-size:1.3rem;"></i>
+                        <span>High-Speed Unlimited Bandwidth</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid var(--stroke);">
+                        <i class="fas fa-check-circle" style="color:var(--green);font-size:1.3rem;"></i>
+                        <span>Access to All Premium Servers</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid var(--stroke);">
+                        <i class="fas fa-check-circle" style="color:var(--green);font-size:1.3rem;"></i>
+                        <span>24/7 WhatsApp Priority Support</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:15px 0;">
+                        <i class="fas fa-check-circle" style="color:var(--green);font-size:1.3rem;"></i>
+                        <span>Personal Config Files</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-arrow-up-right-from-square" style="color:var(--cyan);margin-right:10px;"></i>Need Upgrade?</h3>
+                <p style="color:#8a8cb0;font-size:0.85rem;margin:10px 0 20px;">Plan upgrade කිරීමට හෝ renew කිරීමට WhatsApp ඔස්සේ අමතන්න.</p>
+                <a href="https://wa.me/94764714386?text=Hi, I want to upgrade/renew my VPN subscription" target="_blank" class="btn btn-green">
+                    <i class="fab fa-whatsapp"></i> Contact for Upgrade
+                </a>
+            </div>
+        </section>
+
+        <!-- Server Fleet Page -->
+        <section class="page" id="pg-srv">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+                    <h3><i class="fas fa-server" style="color:var(--cyan);margin-right:10px;"></i>Available Servers</h3>
+                    <span style="color:var(--cyan);font-weight:700;" id="serverCount">0 Servers</span>
+                </div>
+                <div id="serverList">
+                    <div class="empty-state">
+                        <div class="spinner"></div>
+                        <p style="margin-top:15px;">Loading servers...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Configs Page -->
+        <section class="page" id="pg-cfg">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:10px;">
+                    <h3><i class="fas fa-key" style="color:var(--cyan);margin-right:10px;"></i>My Personal Configs</h3>
+                    <button class="btn btn-glass btn-sm" onclick="loadConfigs()">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
+                </div>
+                <p style="color:#8a8cb0;font-size:0.8rem;margin-bottom:20px;">
+                    <i class="fas fa-info-circle" style="color:var(--gold);"></i>
+                    මෙම configs ඔබට පමණක් assign කර ඇත. කරුණාකර වෙනත් අයට share කරන්න එපා!
+                </p>
+                <div id="cfgList">
+                    <div class="empty-state">
+                        <div class="spinner"></div>
+                        <p style="margin-top:15px;">Loading configs...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-circle-question" style="color:var(--purple);margin-right:10px;"></i>How to Use Config</h3>
+                <div style="margin-top:15px;color:#8a8cb0;font-size:0.85rem;line-height:1.8;">
+                    <p><strong style="color:var(--cyan);">Step 1:</strong> Downloads section එකෙන් VPN app එක download කරගන්න</p>
+                    <p><strong style="color:var(--cyan);">Step 2:</strong> ඔබේ config code එක Copy කරන්න</p>
+                    <p><strong style="color:var(--cyan);">Step 3:</strong> App එක open කර Import → Clipboard → Paste කරන්න</p>
+                    <p><strong style="color:var(--cyan);">Step 4:</strong> Connect බොත්තම ඔබා VPN භාවිතා කරන්න!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Invoices Page -->
+        <section class="page" id="pg-inv">
+            <div class="card">
+                <h3><i class="fas fa-file-invoice" style="color:var(--cyan);margin-right:10px;"></i>Payment History</h3>
+                <p style="color:#8a8cb0;font-size:0.8rem;margin:10px 0 20px;">ඔබේ සියලුම payments මෙහි record වේ.</p>
+                <div id="invoiceList">
+                    <div class="empty-state">
+                        <div class="spinner"></div>
+                        <p style="margin-top:15px;">Loading invoices...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-credit-card" style="color:var(--gold);margin-right:10px;"></i>Payment Methods</h3>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:15px;margin-top:20px;">
+                    <div style="padding:20px;background:rgba(255,255,255,0.03);border-radius:15px;text-align:center;border:1px solid var(--stroke);">
+                        <i class="fas fa-mobile-screen" style="font-size:2rem;color:var(--cyan);"></i>
+                        <p style="margin-top:10px;font-weight:600;font-size:0.9rem;">eZ Cash</p>
+                    </div>
+                    <div style="padding:20px;background:rgba(255,255,255,0.03);border-radius:15px;text-align:center;border:1px solid var(--stroke);">
+                        <i class="fas fa-building-columns" style="font-size:2rem;color:var(--purple);"></i>
+                        <p style="margin-top:10px;font-weight:600;font-size:0.9rem;">Bank Transfer</p>
+                    </div>
+                    <div style="padding:20px;background:rgba(255,255,255,0.03);border-radius:15px;text-align:center;border:1px solid var(--stroke);">
+                        <i class="fab fa-whatsapp" style="font-size:2rem;color:var(--green);"></i>
+                        <p style="margin-top:10px;font-weight:600;font-size:0.9rem;">WhatsApp</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Downloads Page -->
+        <section class="page" id="pg-dl">
+            <div class="card" style="text-align:center;padding:40px;">
+                <i class="fas fa-cloud-arrow-down" style="font-size:4rem;color:var(--cyan);"></i>
+                <h2 style="margin:20px 0 10px;">Download VPN Apps</h2>
+                <p style="color:#8a8cb0;margin-bottom:10px;">ඔබේ device එකට ගැලපෙන VPN app එක download කරගන්න.</p>
+                
+                <div class="download-grid">
+                    <a href="https://sourceforge.net/projects/netmodhttp/files/latest/download" target="_blank" class="download-card">
+                        <i class="fab fa-windows" style="color:var(--cyan);"></i>
+                        <h4>Netmod</h4>
+                        <p>Windows PC</p>
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang" target="_blank" class="download-card">
+                        <i class="fab fa-android" style="color:var(--green);"></i>
+                        <h4>V2rayNG</h4>
+                        <p>Android</p>
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=com.npv.tunnel" target="_blank" class="download-card">
+                        <i class="fas fa-rocket" style="color:var(--purple);"></i>
+                        <h4>NapsternetV</h4>
+                        <p>Android</p>
+                    </a>
+                    <a href="https://apps.apple.com/app/napsternetv/id1629465476" target="_blank" class="download-card">
+                        <i class="fab fa-apple" style="color:#fff;"></i>
+                        <h4>NapsternetV</h4>
+                        <p>iOS / iPhone</p>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-life-ring" style="color:var(--green);margin-right:10px;"></i>Need Help?</h3>
+                <p style="color:#8a8cb0;font-size:0.85rem;margin:10px 0 20px;">VPN setup කිරීමට උදව් අවශ්‍යද? අපි ඔබට help කරන්නම්!</p>
+                <a href="https://wa.me/94764714386?text=Hi, I need help setting up the VPN app" target="_blank" class="btn btn-green">
+                    <i class="fab fa-whatsapp"></i> Get Setup Help
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // ==========================================
+        // LOGIN CHECK
+        // ==========================================
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            window.location.href = 'login.html';
+        }
+
+        // ==========================================
+        // NOTIFICATION SYSTEM
+        // ==========================================
+        function showNotification(message, type = 'success') {
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                info: 'info-circle'
+            };
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `<i class="fas fa-${icons[type] || icons.info}"></i> ${message}`;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // ==========================================
+        // SIDEBAR TOGGLE
+        // ==========================================
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        // ==========================================
+        // PAGE SWITCHING
+        // ==========================================
+        function switchPage(pageId, element) {
+            // Remove active from all nav links
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            // Add active to clicked element
+            if (element) {
+                element.classList.add('active');
+            } else {
+                const navEl = document.querySelector(`[data-page="${pageId}"]`);
+                if (navEl) navEl.classList.add('active');
+            }
+
+            // Hide all pages, show target
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const targetPage = document.getElementById('pg-' + pageId);
+            if (targetPage) targetPage.classList.add('active');
+
+            // Update title
+            const titles = {
+                home: "Dashboard",
+                sub: "Subscription",
+                srv: "Server Fleet",
+                cfg: "My Configs",
+                inv: "Invoices",
+                dl: "Downloads"
+            };
+            document.getElementById('pageTitle').innerText = titles[pageId] || "Panel";
+
+            // Close sidebar on mobile
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('overlay').classList.remove('active');
+            }
+        }
+
+        // ==========================================
+        // CALCULATE DAYS LEFT
+        // ==========================================
+        function calculateDaysLeft(expiryDate) {
+            if (!expiryDate) return 0;
+            const expiry = new Date(expiryDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            expiry.setHours(0, 0, 0, 0);
+            const diffTime = expiry - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays > 0 ? diffDays : 0;
+        }
+
+        // ==========================================
+        // FORMAT DATE
+        // ==========================================
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // ==========================================
+        // REFRESH USER DATA FROM STORAGE
+        // ==========================================
+        function refreshUserData() {
+            const users = JSON.parse(localStorage.getItem('vpn_users')) || [];
+            const freshUser = users.find(u => u.username === currentUser.username);
+            
+            if (freshUser) {
+                currentUser = { ...currentUser, ...freshUser };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+        }
+
+        // ==========================================
+        // LOAD USER INFO
+        // ==========================================
+        function loadUserInfo() {
+            refreshUserData();
+
+            const name = currentUser.name || currentUser.username || "User";
+            document.getElementById('uName').innerText = name;
+            document.getElementById('uLetter').innerText = name.charAt(0).toUpperCase();
+            document.getElementById('pageGreeting').innerText = `Welcome back, ${name}!`;
+
+            // Update status
+            const status = currentUser.status || 'active';
+            const statusEl = document.getElementById('uStatus');
+            if (status.toLowerCase() === 'active') {
+                statusEl.innerHTML = '<span style="color:var(--green);">● Active</span>';
+            } else {
+                statusEl.innerHTML = '<span style="color:var(--red);">● Inactive</span>';
+            }
+        }
+
+        // ==========================================
+        // LOAD DASHBOARD STATS
+        // ==========================================
+        function loadDashboardStats() {
+            // Bandwidth
+            const total = parseFloat(currentUser.totalData) || parseFloat(currentUser.dataLimit) || 0;
+            const used = parseFloat(currentUser.usedData) || 0;
+            const pct = total > 0 ? Math.min((used / total) * 100, 100) : 0;
+
+            document.getElementById('valTotal').innerText = total + " GB";
+            document.getElementById('valUsed').innerText = used.toFixed(2) + " GB";
+            document.getElementById('usagePct').innerText = pct.toFixed(1) + "%";
+            
+            setTimeout(() => {
+                document.getElementById('usageFill').style.width = pct + "%";
+            }, 200);
+            
+            document.getElementById('usageDesc').innerText = 
+                `ඔබ ${used.toFixed(2)} GB භාවිතා කර ඇත. ඔබේ මාසික data limit ${total} GB.`;
+
+            // Days Left
+            const daysLeft = calculateDaysLeft(currentUser.expiryDate || currentUser.expiry);
+            document.getElementById('valDays').innerText = daysLeft;
+            document.getElementById('valDays').style.color = daysLeft < 7 ? 'var(--red)' : 'var(--green)';
+
+            // Config Count
+            const userConfigs = getUserConfigs();
+            document.getElementById('valConfigs').innerText = userConfigs.length;
+            document.getElementById('configCountBadge').innerText = userConfigs.length;
+        }
+
+        // ==========================================
+        // LOAD SUBSCRIPTION INFO
+        // ==========================================
+        function loadSubscriptionInfo() {
+            const total = parseFloat(currentUser.totalData) || parseFloat(currentUser.dataLimit) || 0;
+            const daysLeft = calculateDaysLeft(currentUser.expiryDate || currentUser.expiry);
+            const status = currentUser.status || 'active';
+            const plan = currentUser.plan || currentUser.package || 'Premium Plan';
+
+            document.getElementById('subPlanName').innerText = plan;
+            document.getElementById('subData').innerText = total + ' GB';
+            document.getElementById('subDaysLeft').innerText = daysLeft;
+            document.getElementById('subStatus').innerText = status.toUpperCase();
+            document.getElementById('subStatus').style.color = 
+                status.toLowerCase() === 'active' ? 'var(--green)' : 'var(--red)';
+            
+            document.getElementById('subExpiry').innerText = 
+                `Valid until: ${formatDate(currentUser.expiryDate || currentUser.expiry)}`;
+
+            // Badge
+            if (status.toLowerCase() === 'active') {
+                document.getElementById('subBadge').innerText = '⭐ PREMIUM MEMBER';
+                document.getElementById('subBadge').style.background = 'linear-gradient(135deg, var(--cyan), var(--purple))';
+            } else {
+                document.getElementById('subBadge').innerText = '⚠️ EXPIRED';
+                document.getElementById('subBadge').style.background = 'var(--red)';
+            }
+        }
+
+        // ==========================================
+        // GET USER CONFIGS - Main Function
+        // ==========================================
+        function getUserConfigs() {
+            // Get all configs from localStorage (stored by admin)
+            const allConfigs = JSON.parse(localStorage.getItem('vpn_configs')) || [];
+            
+            // Filter configs assigned to this user
+            const userConfigs = allConfigs.filter(config => {
+                // Check various possible field names
+                const assignedUser = config.user || config.assignedTo || config.username || config.assignedUser || '';
+                return assignedUser.toLowerCase() === currentUser.username.toLowerCase();
+            });
+
+            return userConfigs;
+        }
+
+        // ==========================================
+        // LOAD CONFIGS - Display Function
+        // ==========================================
+        function loadConfigs() {
+            const cfgList = document.getElementById('cfgList');
+            const userConfigs = getUserConfigs();
+
+            // Update count badge
+            document.getElementById('configCountBadge').innerText = userConfigs.length;
+            document.getElementById('valConfigs').innerText = userConfigs.length;
+
+            if (userConfigs.length > 0) {
+                cfgList.innerHTML = userConfigs.map((config, index) => {
+                    const configName = config.name || config.configName || `Premium Config ${index + 1}`;
+                    const configServer = config.server || config.serverName || 'Premium Server';
+                    const configCode = config.code || config.config || config.configCode || 'No config data';
+                    const configType = config.type || config.protocol || 'V2Ray';
+                    const createdDate = config.createdAt || config.date || '';
+
+                    return `
+                        <div class="config-box">
+                            <div class="config-header">
+                                <div class="config-info">
+                                    <h4><i class="fas fa-shield-halved"></i> ${configName}</h4>
+                                    <div class="config-meta">
+                                        <span><i class="fas fa-server"></i> ${configServer}</span>
+                                        <span><i class="fas fa-code"></i> ${configType}</span>
+                                        ${createdDate ? `<span><i class="fas fa-calendar"></i> ${formatDate(createdDate)}</span>` : ''}
+                                    </div>
+                                </div>
+                                <div class="config-actions">
+                                    <button class="btn btn-cyan btn-sm" onclick="copyConfig(${index})">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                    <button class="btn btn-glass btn-sm" onclick="downloadConfig(${index}, '${configName}')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="code-area" id="config-code-${index}">${escapeHtml(configCode)}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                cfgList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-key"></i>
+                        <h3>No Configs Assigned</h3>
+                        <p style="margin-bottom:20px;">Admin විසින් ඔබට config assign කළ පසු මෙහි පෙන්වයි.</p>
+                        <a href="https://wa.me/94764714386?text=Hi, I need VPN configs. My username: ${currentUser.username}" 
+                           target="_blank" class="btn btn-green">
+                            <i class="fab fa-whatsapp"></i> Request Configs
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // ==========================================
+        // ESCAPE HTML - Security
+        // ==========================================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ==========================================
+        // COPY CONFIG
+        // ==========================================
+        function copyConfig(index) {
+            const codeElement = document.getElementById('config-code-' + index);
+            if (!codeElement) return;
+
+            const text = codeElement.innerText;
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('Config copied to clipboard!', 'success');
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showNotification('Config copied!', 'success');
+            } catch (e) {
+                showNotification('Copy failed. Please copy manually.', 'error');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // ==========================================
+        // DOWNLOAD CONFIG
+        // ==========================================
+        function downloadConfig(index, name) {
+            const codeElement = document.getElementById('config-code-' + index);
+            if (!codeElement) return;
+
+            const text = codeElement.innerText;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${name.replace(/[^a-z0-9]/gi, '_')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Config downloaded!', 'success');
+        }
+
+        // ==========================================
+        // LOAD SERVERS
+        // ==========================================
+        function loadServers() {
+            const servers = JSON.parse(localStorage.getItem('vpn_servers')) || [];
+            const serverList = document.getElementById('serverList');
+            
+            // Default servers if none added by admin
+            const defaultServers = [
+                { name: 'Singapore Premium', location: 'Singapore', flag: '🇸🇬', type: 'V2Ray', status: 'online' },
+                { name: 'Japan Ultra', location: 'Tokyo', flag: '🇯🇵', type: 'VMess', status: 'online' },
+                { name: 'USA Premium', location: 'New York', flag: '🇺🇸', type: 'V2Ray', status: 'online' },
+                { name: 'Germany Fast', location: 'Frankfurt', flag: '🇩🇪', type: 'Trojan', status: 'online' },
+                { name: 'India Speed', location: 'Mumbai', flag: '🇮🇳', type: 'V2Ray', status: 'online' }
+            ];
+
+            const displayServers = servers.length > 0 ? servers : defaultServers;
+            document.getElementById('serverCount').innerText = displayServers.length + ' Servers';
+
+            serverList.innerHTML = displayServers.map(srv => `
+                <div class="srv-item">
+                    <div class="srv-icon">${srv.flag || '🌐'}</div>
+                    <div class="srv-info">
+                        <h4>${srv.name || 'Unknown Server'}</h4>
+                        <p>${srv.location || 'Unknown'} • ${srv.type || 'VPN'}</p>
+                    </div>
+                    <div class="srv-status ${srv.status === 'online' ? 'status-online' : 'status-offline'}">
+                        ${srv.status === 'online' ? '● Online' : '● Offline'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==========================================
+        // LOAD INVOICES
+        // ==========================================
+        function loadInvoices() {
+            const allInvoices = JSON.parse(localStorage.getItem('vpn_invoices')) || [];
+            const userInvoices = allInvoices.filter(inv => 
+                inv.user === currentUser.username || 
+                inv.username === currentUser.username
+            );
+            
+            const invoiceList = document.getElementById('invoiceList');
+
+            if (userInvoices.length > 0) {
+                invoiceList.innerHTML = userInvoices.map(inv => `
+                    <div class="invoice-item">
+                        <div>
+                            <strong style="color:var(--cyan);">#${inv.id || 'INV-' + Math.random().toString(36).substr(2, 6).toUpperCase()}</strong>
+                            <p style="font-size:0.75rem;color:#8a8cb0;">${formatDate(inv.date)}</p>
+                        </div>
+                        <div style="text-align:center;">
+                            <strong>${inv.plan || inv.description || 'VPN Package'}</strong>
+                            <p style="font-size:0.75rem;color:#8a8cb0;">${inv.period || '30 Days'}</p>
+                        </div>
+                        <div style="text-align:right;">
+                            <strong>Rs. ${inv.amount || '0'}</strong>
+                            <span class="inv-status ${inv.status === 'paid' ? 'inv-paid' : 'inv-pending'}">
+                                ${inv.status === 'paid' ? '✓ PAID' : '⏳ PENDING'}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                invoiceList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>No Invoices Yet</h3>
+                        <p>ඔබේ payment history මෙහි පෙන්වයි.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ==========================================
+        // LOAD NOTICES
+        // ==========================================
+        function loadNotices() {
+            const notices = JSON.parse(localStorage.getItem('vpn_notices')) || [];
+            const noticeBoard = document.getElementById('noticeBoard');
+
+            if (notices.length > 0) {
+                noticeBoard.innerHTML = notices.slice(0, 5).map(notice => `
+                    <div class="notice-item">
+                        <h4>${notice.title || 'Announcement'}</h4>
+                        <p>${notice.message || notice.content || ''}</p>
+                        <div class="date">${formatDate(notice.date)}</div>
+                    </div>
+                `).join('');
+            } else {
+                noticeBoard.innerHTML = `
+                    <div class="notice-item" style="border-color:var(--green);">
+                        <h4>🎉 Welcome to Akith Creation VPN!</h4>
+                        <p>Thank you for choosing our premium VPN service. Enjoy secure & fast browsing!</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ==========================================
+        // REFRESH ALL DATA
+        // ==========================================
+        function refreshData() {
+            const icon = document.getElementById('refreshIcon');
+            icon.classList.add('fa-spin');
+            
+            setTimeout(() => {
+                loadUserInfo();
+                loadDashboardStats();
+                loadSubscriptionInfo();
+                loadConfigs();
+                loadServers();
+                loadInvoices();
+                loadNotices();
+                
+                icon.classList.remove('fa-spin');
+                showNotification('Data refreshed successfully!', 'success');
+            }, 500);
+        }
+
+        // ==========================================
+        // LOGOUT
+        // ==========================================
+        function logout() {
+            if (confirm('ඔබට logout වීමට අවශ්‍යද?')) {
+                localStorage.removeItem('currentUser');
+                showNotification('Logging out...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
+            }
+        }
+
+        // ==========================================
+        // INITIALIZE
+        // ==========================================
+        function init() {
+            loadUserInfo();
+            loadDashboardStats();
+            loadSubscriptionInfo();
+            loadConfigs();
+            loadServers();
+            loadInvoices();
+            loadNotices();
+        }
+
+        // Run on page load
+        window.onload = init;
+
+        // Auto refresh every 30 seconds
+        setInterval(() => {
+            refreshUserData();
+            loadDashboardStats();
+            loadConfigs();
+        }, 30000);
+
+        // Close sidebar on outside click (mobile)
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.querySelector('.menu-btn');
+            
+            if (window.innerWidth < 768 && 
+                sidebar.classList.contains('active') && 
+                !sidebar.contains(e.target) && 
+                !menuBtn.contains(e.target)) {
+                toggleSidebar();
+            }
+        });
+    </script>
+</body>
+</html>

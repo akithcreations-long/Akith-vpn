@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Login — Akith Creation VPN Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+--cyan:#00e0ff;
+--gold:#f2c94c;
+--purple:#7b2fff;
+--bg:#020209;
+}
+body{
+font-family:'Poppins',sans-serif;
+background:var(--bg);
+color:#fff;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+.orb{
+position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;
+animation:float 18s ease-in-out infinite;
+}
+.orb.one{width:600px;height:600px;top:-20%;right:-10%;
+background:radial-gradient(circle,rgba(0,224,255,.4),transparent 70%)}
+.orb.two{width:500px;height:500px;bottom:-15%;left:-8%;
+background:radial-gradient(circle,rgba(242,201,76,.3),transparent 70%);
+animation-delay:-5s}
+@keyframes float{
+0%,100%{transform:translate(0,0)}
+50%{transform:translate(40px,-30px)}
+}
+.container{
+position:relative;width:100%;max-width:950px;
+display:grid;grid-template-columns:1fr 1.1fr;
+border-radius:28px;overflow:hidden;
+box-shadow:0 40px 120px rgba(0,0,0,.9);
+}
+.container::before{
+content:'';position:absolute;inset:-2px;border-radius:30px;
+background:conic-gradient(from 0deg,var(--cyan),var(--gold),var(--purple),var(--cyan));
+animation:borderSpin 6s linear infinite;z-index:-1;
+}
+@keyframes borderSpin{
+0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}
+}
+.left{
+background:linear-gradient(165deg,rgba(8,12,50,.96),rgba(3,5,18,.99));
+padding:50px 40px;display:flex;flex-direction:column;justify-content:center;
+}
+.left h1{
+font-size:2rem;font-weight:900;line-height:1.3;margin-bottom:15px;
+}
+.left h1 span{
+background:linear-gradient(135deg,var(--cyan),var(--gold));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.left p{color:#9d9fbb;font-size:.9rem;line-height:1.6;}
+
+.features{
+margin-top:25px;
+display:flex;flex-direction:column;gap:12px;
+}
+.features div{
+display:flex;align-items:center;gap:10px;
+font-size:.82rem;color:#b0b2d0;
+}
+.features div i{
+color:var(--cyan);font-size:.9rem;
+}
+
+.right{
+background:linear-gradient(165deg,rgba(10,14,45,.95),rgba(5,7,22,.98));
+padding:50px 40px;display:flex;flex-direction:column;justify-content:center;
+}
+.right h2{font-size:1.5rem;font-weight:900;margin-bottom:8px;}
+.right p.sub{color:#9d9fbb;font-size:.85rem;margin-bottom:25px;}
+.field{margin-bottom:18px}
+.field label{
+display:block;font-size:.75rem;text-transform:uppercase;
+letter-spacing:.1em;color:#8a8cb0;margin-bottom:6px;font-weight:700;
+}
+.input{
+display:flex;align-items:center;gap:10px;
+padding:12px 14px;border-radius:14px;
+background:rgba(2,4,18,.9);
+border:1px solid rgba(255,255,255,.08);
+transition:.3s;
+}
+.input:focus-within{
+border-color:var(--cyan);
+box-shadow:0 0 0 3px rgba(0,224,255,.1);
+}
+.input input{
+flex:1;background:transparent;border:none;outline:none;
+color:#fff;font-size:.9rem;
+}
+.input input::placeholder{color:#4a4c6a;font-size:.82rem}
+.eye{cursor:pointer;color:#6b6d8a;transition:.3s}
+.eye:hover{color:var(--cyan)}
+.btn{
+width:100%;
+margin-top:15px;padding:14px;border:none;border-radius:14px;
+background:linear-gradient(135deg,var(--cyan),var(--gold));
+font-weight:900;cursor:pointer;color:#050510;
+font-size:.95rem;transition:.3s;
+display:flex;align-items:center;justify-content:center;gap:8px;
+font-family:'Poppins',sans-serif;
+}
+.btn:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 30px rgba(0,224,255,.25);
+}
+.btn:active{transform:translateY(0)}
+.btn.loading{
+pointer-events:none;opacity:.7;
+}
+
+.msg{
+display:none;padding:12px 15px;border-radius:12px;
+margin-bottom:15px;font-size:.85rem;text-align:center;
+backdrop-filter:blur(10px);
+border:1px solid transparent;
+}
+.msg.success{
+display:block;
+background:rgba(37,211,102,.12);
+color:#7dffb3;
+border-color:rgba(37,211,102,.2);
+}
+.msg.error{
+display:block;
+background:rgba(255,50,50,.1);
+color:#ff9a9a;
+border-color:rgba(255,50,50,.15);
+}
+
+.spinner{
+display:none;
+width:18px;height:18px;
+border:2.5px solid rgba(5,5,16,.2);
+border-top:2.5px solid #050510;
+border-radius:50%;
+animation:spin .6s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:850px){
+.container{grid-template-columns:1fr}
+.left{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="orb one"></div>
+<div class="orb two"></div>
+
+<div class="container">
+
+<div class="left">
+<h1>Premium VPN.<br><span>Luxury Access.</span><br>Total Privacy.</h1>
+<p>Login to manage your subscription, configs and servers securely.</p>
+<div class="features">
+<div><i class="fas fa-shield-halved"></i> End-to-end encryption</div>
+<div><i class="fas fa-bolt"></i> Ultra-fast servers worldwide</div>
+<div><i class="fas fa-clock"></i> 24/7 premium support</div>
+<div><i class="fas fa-infinity"></i> Unlimited bandwidth</div>
+</div>
+</div>
+
+<div class="right">
+
+<h2>Welcome Back 👋</h2>
+<p class="sub">Sign in to your Akith Creation VPN account</p>
+
+<div class="msg" id="msg"></div>
+
+<form id="loginForm" onsubmit="login(event)">
+<div class="field">
+<label>Username</label>
+<div class="input">
+<i class="fas fa-user" style="color:#6b6d8a"></i>
+<input type="text" id="user" placeholder="Enter your username" required autocomplete="username">
+</div>
+</div>
+
+<div class="field">
+<label>Password</label>
+<div class="input">
+<i class="fas fa-lock" style="color:#6b6d8a"></i>
+<input type="password" id="pass" placeholder="Enter your password" required autocomplete="current-password">
+<i class="fas fa-eye eye" id="eyeIcon" onclick="toggle()"></i>
+</div>
+</div>
+
+<button class="btn" id="loginBtn" type="submit">
+<span id="btnText"><i class="fas fa-right-to-bracket"></i> Sign In</span>
+<div class="spinner" id="spinner"></div>
+</button>
+
+</form>
+
+</div>
+</div>
+
+<script>
+function toggle(){
+    const p = document.getElementById('pass');
+    const icon = document.getElementById('eyeIcon');
+    if(p.type === 'password'){
+        p.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        p.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+function showMsg(t, type){
+    const m = document.getElementById('msg');
+    m.textContent = t;
+    m.className = 'msg ' + type;
+}
+
+function hideMsg(){
+    document.getElementById('msg').className = 'msg';
+}
+
+function getAllUsers(){
+    let allUsers = [];
+
+    // Check all possible localStorage keys your admin panel might use
+    const possibleKeys = [
+        'vpn_users_list',
+        'vpn_users',
+        'users',
+        'usersList',
+        'users_list',
+        'vpnUsers',
+        'admin_users',
+        'registeredUsers',
+        'app_users'
+    ];
+
+    for(let key of possibleKeys){
+        try {
+            let data = localStorage.getItem(key);
+            if(data){
+                let parsed = JSON.parse(data);
+                if(Array.isArray(parsed)){
+                    parsed.forEach(u => {
+                        // Normalize - handle different field names
+                        let userObj = {
+                            username: u.username || u.user || u.name || u.userName || u.uname || '',
+                            password: u.password || u.pass || u.pwd || u.passwd || '',
+                            name: u.name || u.fullName || u.displayName || u.username || u.user || '',
+                            totalData: u.totalData || u.data || u.dataLimit || u.total || 100,
+                            usedData: u.usedData || u.used || 0,
+                            configs: u.configs || [],
+                            plan: u.plan || u.package || 'Basic',
+                            expiry: u.expiry || u.expiryDate || u.expire || '',
+                            status: u.status || 'active',
+                            _sourceKey: key,
+                            _original: u
+                        };
+                        // Only add if it has both username and password
+                        if(userObj.username && userObj.password){
+                            allUsers.push(userObj);
+                        }
+                    });
+                }
+            }
+        } catch(e){
+            // Skip invalid JSON
+        }
+    }
+
+    // Also scan ALL localStorage keys for any array that looks like user data
+    for(let i = 0; i < localStorage.length; i++){
+        let key = localStorage.key(i);
+        if(possibleKeys.includes(key)) continue; // Already checked
+        try {
+            let data = JSON.parse(localStorage.getItem(key));
+            if(Array.isArray(data) && data.length > 0){
+                let first = data[0];
+                // Check if it looks like user data
+                if(first && typeof first === 'object' && 
+                   (first.username || first.user || first.userName) && 
+                   (first.password || first.pass || first.pwd)){
+                    data.forEach(u => {
+                        let userObj = {
+                            username: u.username || u.user || u.userName || u.uname || '',
+                            password: u.password || u.pass || u.pwd || u.passwd || '',
+                            name: u.name || u.fullName || u.displayName || u.username || '',
+                            totalData: u.totalData || u.data || u.dataLimit || 100,
+                            usedData: u.usedData || u.used || 0,
+                            configs: u.configs || [],
+                            plan: u.plan || u.package || 'Basic',
+                            expiry: u.expiry || u.expiryDate || u.expire || '',
+                            status: u.status || 'active',
+                            _sourceKey: key,
+                            _original: u
+                        };
+                        if(userObj.username && userObj.password){
+                            allUsers.push(userObj);
+                        }
+                    });
+                }
+            }
+        } catch(e){}
+    }
+
+    return allUsers;
+}
+
+function login(e){
+    e.preventDefault();
+    hideMsg();
+
+    const username = document.getElementById('user').value.trim();
+    const password = document.getElementById('pass').value.trim();
+
+    if(!username || !password){
+        showMsg('❌ Please enter both username and password','error');
+        return;
+    }
+
+    // Show loading
+    const btn = document.getElementById('loginBtn');
+    const btnText = document.getElementById('btnText');
+    const spinner = document.getElementById('spinner');
+    btn.classList.add('loading');
+    btnText.style.display = 'none';
+    spinner.style.display = 'block';
+
+    // Simulate slight delay for better UX
+    setTimeout(()=>{
+        // Get all users from admin panel storage
+        let users = getAllUsers();
+
+        // Find matching user (case-insensitive username, exact password)
+        const found = users.find(u => 
+            u.username.toLowerCase() === username.toLowerCase() && 
+            u.password === password
+        );
+
+        if(!found){
+            btn.classList.remove('loading');
+            btnText.style.display = 'flex';
+            btnText.style.alignItems = 'center';
+            btnText.style.justifyContent = 'center';
+            btnText.style.gap = '8px';
+            spinner.style.display = 'none';
+
+            if(users.length === 0){
+                showMsg('❌ No users found! Admin must create accounts first.','error');
+            } else {
+                showMsg('❌ Invalid username or password','error');
+            }
+            return;
+        }
+
+        // Check if user is active
+        if(found.status && found.status !== 'active'){
+            btn.classList.remove('loading');
+            btnText.style.display = 'flex';
+            btnText.style.alignItems = 'center';
+            btnText.style.justifyContent = 'center';
+            btnText.style.gap = '8px';
+            spinner.style.display = 'none';
+            showMsg('🚫 Your account has been suspended. Contact admin.','error');
+            return;
+        }
+
+        // Save logged in user data
+        localStorage.setItem('currentUser', JSON.stringify(found));
+        localStorage.setItem('loggedInUser', JSON.stringify(found));
+        localStorage.setItem('vpn_current_user', JSON.stringify(found));
+
+        showMsg('✅ Login Successful! Redirecting...','success');
+
+        setTimeout(()=>{
+            window.location.href = 'dashboard.html';
+        },1200);
+    }, 800);
+}
+
+// Enter key support
+document.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+        document.getElementById('loginForm').requestSubmit();
+    }
+});
+
+// Clear message on input
+document.getElementById('user').addEventListener('input', hideMsg);
+document.getElementById('pass').addEventListener('input', hideMsg);
+</script>
+
+</body>
+</html>
